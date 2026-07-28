@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finalizar pedido — Idle Verse</title>
+  <meta name="description" content="Pague via PIX e envie o comprovante pelo WhatsApp para ativar seu plano do Idle Verse.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    // ============================================================
+    // ⇩⇩ Dados do recebimento e do WhatsApp de confirmação ⇩⇩
+    // ============================================================
+    const PIX_NOME  = "Pedro José de Mello Alencar";
+    const PIX_CHAVE = "132.561.117-42";
+    const WHATSAPP_NUMERO = "5521972355910"; // 55 + DDD + número
+
+    const PLANOS = {
+      basico: {
+        nome: "Básico",
+        preco: "R$ 9,90",
+        precoOriginal: "R$ 19,90",
+        cobranca: "Pagamento único · licença vitalícia — oferta por tempo limitado",
+        resumo: "1 menu com 4 telas, configurável para qualquer site (jogo, e-mail, painel de trabalho...).",
+        valorPix: "9,90",
+        msg: "Olá! Quero o plano *Básico* do Idle Verse (de R$ 19,90 por R$ 9,90, pagamento único). Já fiz o PIX e vou enviar o comprovante agora. Meu e-mail: "
+      }
+    };
+
+    // VIP tem 3 formas de cobrança — mesmos benefícios, muda só o período e o preço
+    const VIP_PERIODOS = {
+      mensal: {
+        nome: "VIP Mensal",
+        preco: "R$ 14,90",
+        precoOriginal: "",
+        cobranca: "1º mês R$ 14,90 · depois R$ 5,00/mês · cancele quando quiser",
+        resumo: "5 menus, até 20 telas no total. Ganha o plano Básico vitalício de brinde e mantém os benefícios VIP enquanto a assinatura estiver ativa.",
+        valorPix: "14,90",
+        msg: "Olá! Quero assinar o plano *VIP Mensal* do Idle Verse (R$ 14,90 no 1º mês, depois R$ 5,00/mês). Já fiz o PIX e vou enviar o comprovante agora. Meu e-mail: "
+      },
+      semestral: {
+        nome: "VIP Semestral",
+        preco: "R$ 35,90",
+        precoOriginal: "R$ 39,90",
+        cobranca: "A cada 6 meses (1º mês R$ 14,90 + 5×R$ 5,00) · 10% de desconto",
+        resumo: "5 menus, até 20 telas no total. Ganha o plano Básico vitalício de brinde e mantém os benefícios VIP enquanto a assinatura estiver ativa.",
+        valorPix: "35,90",
+        msg: "Olá! Quero assinar o plano *VIP Semestral* do Idle Verse (R$ 35,90 a cada 6 meses). Já fiz o PIX e vou enviar o comprovante agora. Meu e-mail: "
+      },
+      anual: {
+        nome: "VIP Anual",
+        preco: "R$ 55,90",
+        precoOriginal: "R$ 69,90",
+        cobranca: "A cada 12 meses (1º mês R$ 14,90 + 11×R$ 5,00) · 20% de desconto",
+        resumo: "5 menus, até 20 telas no total. Ganha o plano Básico vitalício de brinde e mantém os benefícios VIP enquanto a assinatura estiver ativa.",
+        valorPix: "55,90",
+        msg: "Olá! Quero assinar o plano *VIP Anual* do Idle Verse (R$ 55,90 a cada 12 meses). Já fiz o PIX e vou enviar o comprovante agora. Meu e-mail: "
+      }
+    };
+  </script>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0f1115;
+      --bg-soft: #13161d;
+      --panel: #181b22;
+      --panel-header: #1f2330;
+      --border: #2a2f3d;
+      --text: #e6e8ee;
+      --text-dim: #8b91a3;
+      --accent: #f6c445;
+      --accent-dark: #14161c;
+      --green: #4caf6d;
+      --whatsapp: #25d366;
+      --danger: #e05656;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+    }
+
+    h1, h2, h3, .logo, .kicker, .btn, .price {
+      font-family: "Space Grotesk", "Inter", sans-serif;
+    }
+
+    .wrap {
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 18px 0;
+      margin-bottom: 8px;
+    }
+    header .wrap { display: flex; align-items: center; justify-content: space-between; padding-bottom: 0; }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .logo span { color: var(--accent); font-size: 20px; }
+
+    .back-link {
+      font-size: 13px;
+      color: var(--text-dim);
+      text-decoration: none;
+    }
+    .back-link:hover { color: var(--text); }
+
+    .kicker {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 40px 0 6px;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 26px;
+    }
+
+    /* ---------- Seletor de plano ---------- */
+    .plan-toggle {
+      display: flex;
+      gap: 8px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 5px;
+      margin-bottom: 22px;
+    }
+    .plan-toggle button {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-dim);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .plan-toggle button.active {
+      background: var(--accent);
+      color: var(--accent-dark);
+    }
+
+    .periodo-toggle {
+      display: none;
+      gap: 8px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 5px;
+      margin-bottom: 22px;
+    }
+    .periodo-toggle.show { display: flex; }
+    .periodo-toggle button {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 9px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-dim);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .periodo-toggle button.active { background: var(--accent); color: var(--accent-dark); }
+    .periodo-toggle button .badge-off {
+      font-size: 10px;
+      font-weight: 800;
+      background: var(--danger);
+      color: #fff;
+      padding: 1px 5px;
+      border-radius: 999px;
+    }
+    .periodo-toggle button.active .badge-off { background: var(--accent-dark); color: var(--accent); }
+
+    /* ---------- Cards ---------- */
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px 24px;
+      margin-bottom: 20px;
+    }
+
+    .order-summary {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .order-summary .plan-name { font-size: 15px; color: var(--text-dim); }
+    .price-line { display: flex; align-items: baseline; gap: 8px; }
+    .order-summary .price { font-size: 30px; font-weight: 700; color: var(--accent); }
+    .price-old {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-decoration: line-through;
+    }
+    .price-old:empty { display: none; }
+    .order-cobranca { font-size: 13px; color: var(--text-dim); margin-top: 4px; }
+    .order-resumo { font-size: 14px; color: var(--text); margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+
+    .card h2 {
+      font-size: 15px;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+
+    .pix-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+    .pix-row:last-child { margin-bottom: 0; }
+    .pix-row .label { font-size: 12px; color: var(--text-dim); display: block; margin-bottom: 2px; }
+    .pix-row .value { font-size: 15px; font-weight: 600; word-break: break-all; }
+
+    .copy-btn {
+      flex: 0 0 auto;
+      padding: 7px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--panel-header);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .copy-btn:hover { border-color: var(--accent); }
+    .copy-btn.copied { border-color: var(--green); color: var(--green); }
+
+    .steps-list {
+      list-style: none;
+      counter-reset: passo;
+    }
+    .steps-list li {
+      counter-increment: passo;
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      font-size: 14px;
+      color: var(--text-dim);
+    }
+    .steps-list li::before {
+      content: counter(passo);
+      flex: 0 0 auto;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--accent-dark);
+      font-weight: 700;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .steps-list li strong { color: var(--text); }
+
+    .btn-whatsapp {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      background: var(--whatsapp);
+      color: #06210f;
+      font-weight: 700;
+      font-size: 16px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      font-family: "Space Grotesk", "Inter", sans-serif;
+      transition: filter 0.15s, transform 0.15s;
+    }
+    .btn-whatsapp:hover { filter: brightness(1.06); transform: translateY(-1px); }
+
+    .note {
+      font-size: 12.5px;
+      color: var(--text-dim);
+      text-align: center;
+      margin-top: 14px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="wrap">
+      <a class="logo" href="index.html"><span>⬢</span>IDLE VERSE</a>
+      <a class="back-link" href="index.html">← Voltar</a>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <span class="kicker">Pagamento via PIX</span>
+    <h1>Finalizar pedido</h1>
+
+    <div class="plan-toggle">
+      <button type="button" id="btn-basico" data-plano="basico">Básico</button>
+      <button type="button" id="btn-vip" data-plano="vip">VIP</button>
+    </div>
+
+    <div class="periodo-toggle" id="periodo-toggle">
+      <button type="button" data-periodo="mensal">Mensal</button>
+      <button type="button" data-periodo="semestral">Semestral<span class="badge-off">-10%</span></button>
+      <button type="button" data-periodo="anual">Anual<span class="badge-off">-20%</span></button>
+    </div>
+
+    <div class="card order-summary">
+      <div>
+        <span class="plan-name">Plano <strong id="out-nome"></strong></span>
+        <div class="order-cobranca" id="out-cobranca"></div>
+      </div>
+      <div class="price-line">
+        <span class="price-old" id="out-preco-old"></span>
+        <span class="price" id="out-preco"></span>
+      </div>
+      <div class="order-resumo" id="out-resumo" style="flex-basis: 100%;"></div>
+    </div>
+
+    <div class="card">
+      <h2>Dados para o PIX</h2>
+      <div class="pix-row">
+        <div>
+          <span class="label">Nome do favorecido</span>
+          <span class="value">Pedro José de Mello Alencar</span>
+        </div>
+      </div>
+      <div class="pix-row">
+        <div>
+          <span class="label">Chave PIX (CPF)</span>
+          <span class="value" id="pix-chave-txt">132.561.117-42</span>
+        </div>
+        <button class="copy-btn" id="btn-copy-pix" type="button">Copiar</button>
+      </div>
+      <div class="pix-row">
+        <div>
+          <span class="label">Valor a pagar</span>
+          <span class="value" id="out-valor-pix"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Como funciona</h2>
+      <ul class="steps-list">
+        <li><span>Faça o <strong>PIX</strong> no valor acima usando a chave informada.</span></li>
+        <li><span>Toque no botão verde abaixo e envie o <strong>comprovante</strong> junto com seu <strong>e-mail</strong> pelo WhatsApp.</span></li>
+        <li><span>Confirmamos o pagamento e te enviamos o <strong>app</strong> e o passo a passo de <strong>ativação</strong> por lá mesmo.</span></li>
+      </ul>
+    </div>
+
+    <a class="btn-whatsapp" id="btn-whatsapp" href="#" target="_blank" rel="noopener">
+      💬 Enviar comprovante no WhatsApp
+    </a>
+    <p class="note">
+      Você será direcionado ao WhatsApp com uma mensagem pronta — só confirmar
+      seu e-mail e anexar o comprovante do PIX.
+    </p>
+  </div>
+
+  <script>
+    function planoValido(p) { return p === "basico" || p === "vip"; }
+    function periodoValido(p) { return p === "mensal" || p === "semestral" || p === "anual"; }
+
+    let periodoAtual = "mensal";
+
+    function planoAtual() {
+      const url = new URL(window.location.href);
+      const p = url.searchParams.get("plano");
+      return planoValido(p) ? p : "basico";
+    }
+
+    function render(plano) {
+      const ehVip = plano === "vip";
+      const dados = ehVip ? VIP_PERIODOS[periodoAtual] : PLANOS.basico;
+
+      document.getElementById("btn-basico").classList.toggle("active", !ehVip);
+      document.getElementById("btn-vip").classList.toggle("active", ehVip);
+      document.getElementById("periodo-toggle").classList.toggle("show", ehVip);
+      document.querySelectorAll("#periodo-toggle button").forEach((b) =>
+        b.classList.toggle("active", b.dataset.periodo === periodoAtual));
+
+      document.getElementById("out-nome").textContent = dados.nome;
+      document.getElementById("out-preco").textContent = dados.preco;
+      document.getElementById("out-preco-old").textContent = dados.precoOriginal || "";
+      document.getElementById("out-cobranca").textContent = dados.cobranca;
+      document.getElementById("out-resumo").textContent = dados.resumo;
+      document.getElementById("out-valor-pix").textContent = "R$ " + dados.valorPix;
+
+      const texto = encodeURIComponent(dados.msg);
+      document.getElementById("btn-whatsapp").href =
+        `https://wa.me/${WHATSAPP_NUMERO}?text=${texto}`;
+
+      const url = new URL(window.location.href);
+      url.searchParams.set("plano", plano);
+      if (ehVip) url.searchParams.set("periodo", periodoAtual);
+      else url.searchParams.delete("periodo");
+      history.replaceState(null, "", url);
+    }
+
+    document.getElementById("btn-basico").addEventListener("click", () => render("basico"));
+    document.getElementById("btn-vip").addEventListener("click", () => render("vip"));
+    document.querySelectorAll("#periodo-toggle button").forEach((b) =>
+      b.addEventListener("click", () => { periodoAtual = b.dataset.periodo; render("vip"); }));
+
+    document.getElementById("btn-copy-pix").addEventListener("click", async (e) => {
+      const btn = e.currentTarget;
+      const resetDepois = (texto) => {
+        btn.textContent = texto;
+        btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "Copiar"; btn.classList.remove("copied"); }, 2200);
+      };
+      try {
+        await navigator.clipboard.writeText(PIX_CHAVE);
+        resetDepois("Copiado!");
+      } catch (err) {
+        // Sem permissão de clipboard (ex.: navegador bloqueando) — seleciona o
+        // texto para o usuário copiar manualmente com Ctrl+C.
+        const span = document.getElementById("pix-chave-txt");
+        const range = document.createRange();
+        range.selectNodeContents(span);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        resetDepois("Selecionado, use Ctrl+C");
+      }
+    });
+
+    const periodoNaUrl = new URL(window.location.href).searchParams.get("periodo");
+    if (periodoValido(periodoNaUrl)) periodoAtual = periodoNaUrl;
+    render(planoAtual());
+  </script>
+</body>
+</html>

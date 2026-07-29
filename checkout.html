@@ -475,5 +475,23 @@
     if (periodoValido(periodoNaUrl)) periodoAtual = periodoNaUrl;
     render(planoAtual());
   </script>
+  <script>
+    (() => {
+      const block = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        return false;
+      };
+      document.addEventListener('contextmenu', block, { capture: true });
+      document.addEventListener('keydown', (event) => {
+        const key = String(event.key || '').toLowerCase();
+        if (
+          key === 'f12' ||
+          (event.ctrlKey && key === 'u') ||
+          (event.ctrlKey && event.shiftKey && ['i', 'j', 'c'].includes(key))
+        ) block(event);
+      }, { capture: true });
+    })();
+  </script>
 </body>
 </html>

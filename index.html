@@ -1109,6 +1109,24 @@
 <script id="mobile-nav-script">
 (()=>{const header=document.querySelector('header');const btn=document.querySelector('.nav-toggle');const links=document.querySelectorAll('.nav-links a');if(!header||!btn)return;const close=()=>{header.classList.remove('nav-open');document.body.classList.remove('nav-open');btn.setAttribute('aria-expanded','false')};btn.addEventListener('click',()=>{const open=!header.classList.contains('nav-open');header.classList.toggle('nav-open',open);document.body.classList.toggle('nav-open',open);btn.setAttribute('aria-expanded',String(open))});links.forEach(a=>a.addEventListener('click',close));document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});document.addEventListener('click',e=>{if(header.classList.contains('nav-open')&&!header.contains(e.target))close()})})();
 </script>
+  <script>
+    (() => {
+      const block = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        return false;
+      };
+      document.addEventListener('contextmenu', block, { capture: true });
+      document.addEventListener('keydown', (event) => {
+        const key = String(event.key || '').toLowerCase();
+        if (
+          key === 'f12' ||
+          (event.ctrlKey && key === 'u') ||
+          (event.ctrlKey && event.shiftKey && ['i', 'j', 'c'].includes(key))
+        ) block(event);
+      }, { capture: true });
+    })();
+  </script>
 </body>
 </html>
 

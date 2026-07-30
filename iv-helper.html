@@ -199,11 +199,11 @@ function pokemonFromText(text){
 function pokemonByInput(){const value=$('#pokemonInput').value;const q=norm(value).replace(/^#?\d+\s*/,'').trim();const id=Number(String(value).match(/#?(\d+)/)?.[1]);return catalog.find(p=>p.id===id)||catalog.find(p=>norm(p.name)===q)||catalog.find(p=>norm(p.name).includes(q))||pokemonFromText(lastOcrText||$('#ocrText')?.value||'')}
 function readStats(){return Object.fromEntries(KEYS.map(k=>[k,Number(document.querySelector('[data-stat="'+k+'"]').value)||0]))}
 function bestMoves(p){return (p.moves||[]).slice().sort((a,b)=>b.power-a.power).slice(0,8)}
-function roleFromMoves(p){const moves=bestMoves(p);const phys=moves.filter(m=>/PHYSICAL|FISICO|FÍSICO/.test(m.category)).reduce((s,m)=>s+m.power,0);const spec=moves.filter(m=>/SPECIAL|ESPECIAL/.test(m.category)).reduce((s,m)=>s+m.power,0);if(phys>spec*1.25)return{label:'Atacante físico',main:'atk',secondary:'speed'};if(spec>phys*1.25)return{label:'Atacante especial',main:'spAtk',secondary:'speed'};if((p.base.def+p.base.spDef+p.base.hp)>(p.base.atk+p.base.spAtk+p.base.speed)*1.08)return{label:'Tanque',main:p.base.def>=p.base.spDef?'def':'spDef',secondary:'hp'};return{label:'Misto',main:'atk',secondary:'spAtk'}}
-function overallScore(p,q,map,confirmed){const avg=KEYS.reduce((s,k)=>{const a=map[k]||[];return s+(a.length?(a[0]+a[a.length-1])/2:16)},0)/6;const ivScore=avg/32*38;const rarityScore=Math.min(1,q/2.6)*24;const role=roleFromMoves(p);const mainAvg=((map[role.main]?.[0]||16)+(map[role.main]?.at(-1)||16))/2;const secAvg=((map[role.secondary]?.[0]||16)+(map[role.secondary]?.at(-1)||16))/2;const roleScore=((mainAvg/32)*.68+(secAvg/32)*.32)*22;const bulkAvg=(['hp','def','spDef'].reduce((s,k)=>{const a=map[k]||[];return s+(a.length?(a[0]+a.at(-1))/2:16)},0)/3)/32;const moveTypes=new Set(bestMoves(p).filter(m=>m.power>0).map(m=>m.type));const power=Math.min(1,bestMoves(p).reduce((s,m)=>s+m.power,0)/720);const kitScore=(Math.min(1,moveTypes.size/4)*.35+power*.65)*16;const confidence=.72+confirmed/6*.28;return Math.max(1,Math.min(100,Math.round((ivScore+rarityScore+roleScore+bulkAvg*6+kitScore)*confidence)))}
+function roleFromMoves(p){const moves=bestMoves(p);const phys=moves.filter(m=>/PHYSICAL|FISICO|FÍSICO/.test(m.category)).reduce((s,m)=>s+m.power,0);const spec=moves.filter(m=>/SPECIAL|ESPECIAL/.test(m.category)).reduce((s,m)=>s+m.power,0);const bulkMain=p.base.def>=p.base.spDef?'def':'spDef';if(phys>spec*1.25)return{label:'Atacante físico',main:'atk',secondary:bulkMain,important:['atk',bulkMain,'hp'],speedWeight:.04};if(spec>phys*1.25)return{label:'Atacante especial',main:'spAtk',secondary:bulkMain,important:['spAtk',bulkMain,'hp'],speedWeight:.04};if((p.base.def+p.base.spDef+p.base.hp)>(p.base.atk+p.base.spAtk+p.base.speed)*1.08)return{label:'Tanque',main:bulkMain,secondary:'hp',important:[bulkMain,'hp',bulkMain==='def'?'spDef':'def'],speedWeight:.02};return{label:'Misto',main:'atk',secondary:'spAtk',important:['atk','spAtk','hp'],speedWeight:.03}}
+function statIvAvg(map,k){const a=map[k]||[];return a.length?(a[0]+a.at(-1))/2:16}function overallScore(p,q,map,confirmed){const role=roleFromMoves(p);const ivAvg=KEYS.reduce((s,k)=>s+statIvAvg(map,k),0)/6;const ivScore=ivAvg/32*28;const rarityScore=Math.min(1,q/2.6)*24;const useful=role.important||[role.main,role.secondary,'hp'];const usefulScore=((statIvAvg(map,useful[0])/32)*.48+(statIvAvg(map,useful[1])/32)*.32+(statIvAvg(map,useful[2])/32)*.20)*24;const speedScore=(statIvAvg(map,'speed')/32)*(role.speedWeight||.03)*10;const bulkAvg=(['hp','def','spDef'].reduce((s,k)=>s+statIvAvg(map,k),0)/3)/32;const moveTypes=new Set(bestMoves(p).filter(m=>m.power>0).map(m=>m.type));const power=Math.min(1,bestMoves(p).reduce((s,m)=>s+m.power,0)/720);const kitScore=(Math.min(1,moveTypes.size/4)*.35+power*.65)*16;const confidence=.72+confirmed/6*.28;return Math.max(1,Math.min(100,Math.round((ivScore+rarityScore+usefulScore+bulkAvg*7+kitScore+speedScore)*confidence)))}
 function calculate(){if(!catalog.length){renderError('Catálogo ainda carregando. Tente novamente em alguns segundos.');loadCatalog().catch(()=>{});return}const p=pokemonByInput();if(!p){renderError('Pokémon não encontrado no catálogo. Confira o nome lido pelo OCR ou digite manualmente.');return}const level=Math.max(1,Math.min(500,Number($('#levelInput').value)||1));const q=Number($('#qualityInput').value)||1;const clan=Number($('#clanInput').value)||0;const total=Number($('#ivTotalInput').value)||0;let map=Object.fromEntries(KEYS.map(k=>[k,possibleGrowth(p.base[k],readStats()[k],level,q,k,clan)]));map=refineByTotal(map,total);renderResult(p,level,q,clan,total,map)}
 function renderError(msg){$('#result').innerHTML='<div class="result-empty error"><div><h2>Não foi possível calcular</h2><p>'+msg+'</p></div></div>'}
-function renderResult(p,level,q,clan,total,map){const stats=readStats();let confirmed=0,sumMin=0,sumMax=0;const rows=KEYS.map(k=>{const c=map[k]||[];const lo=c[0],hi=c.at(-1);if(c.length===1)confirmed++;if(c.length){sumMin+=lo;sumMax+=hi}const range=expectedRange(p.base[k],level,q,k,clan);const pct=c.length?((lo+hi)/2)/32*100:Math.min(100,(stats[k]||0)/(range.max||1)*100);const label=c.length?(lo===hi?'✓ '+lo:lo+'–'+hi):(stats[k]>range.max?'↑':'?');const detail=c.length?(lo===hi?'Exato':'Entre valores')+' · stat '+(stats[k]||'—')+'/'+range.max:'fora ou incompleto · esperado '+range.min+'–'+range.max;return '<div class="iv-row"><b style="color:'+COLORS[k]+'">'+LABELS[k]+'</b><div><span class="track"><i style="width:'+pct+'%;background:'+COLORS[k]+'"></i></span><small>'+detail+'</small></div><strong>'+label+'</strong></div>'}).join('');const role=roleFromMoves(p);const overall=overallScore(p,q,map,confirmed);const moves=bestMoves(p).map(m=>'<article class="move"><div><b>'+m.name+'</b><small>'+(TYPE_NAMES[m.type]||m.type)+' · '+(m.category||'')+' · Nv '+m.learnLevel+'</small></div><strong>'+m.power+'</strong></article>').join('')||'<p>Nenhum golpe encontrado no catálogo.</p>';const [rarity,color]=qualityInfo(q);const note=confirmed===6?'Precisão completa':'Estimativa parcial: melhore a precisão subindo de nível ou conferindo stats';$('#result').innerHTML='<div class="result-helper"><div class="result-top"><div class="poke-title"><img src="'+(p.image||'')+'" alt=""><div><h2>'+p.name+' <small>Lv '+level+'</small></h2><p><span style="color:'+color+'">'+rarity+' · '+q.toFixed(3)+'</span> · '+role.label+'</p><p>'+typeBadge(p.type1)+' '+typeBadge(p.type2)+'</p></div></div><div class="overall"><strong>'+overall+'%</strong><small>Overall</small></div></div><div class="result-body"><div class="iv-metrics"><div class="metric"><b>'+(sumMin===sumMax?sumMin:sumMin+'–'+sumMax)+'</b><small>IV total</small></div><div class="metric"><b>'+confirmed+'/6</b><small>Confirmados</small></div><div class="metric"><b>Nv '+Math.max(...KEYS.map(k=>precisionLevel(p.base[k],q,k,clan)))+'</b><small>Precisão total</small></div><div class="metric"><b>'+note.split(':')[0]+'</b><small>Status</small></div></div><div>'+rows+'</div><h2>Golpes principais</h2><div class="moves">'+moves+'</div><div class="insights"><div class="insight"><h3>Leitura rápida</h3><ul><li>Overall compara IV, raridade, atributos úteis para a função e qualidade dos golpes.</li><li>O topo de referência usa qualidade Mítica 2.60 como padrão competitivo atual.</li><li>O nível atual não pesa no Overall, só ajuda a descobrir os IVs.</li></ul></div><div class="insight"><h3>Uso sugerido</h3><ul><li>Função provável: '+role.label+'.</li><li>Atributos mais importantes: '+LABELS[role.main]+' e '+LABELS[role.secondary]+'.</li><li>'+note+'.</li></ul></div></div></div></div>'}
+function renderResult(p,level,q,clan,total,map){const stats=readStats();let confirmed=0,sumMin=0,sumMax=0;const rows=KEYS.map(k=>{const c=map[k]||[];const lo=c[0],hi=c.at(-1);if(c.length===1)confirmed++;if(c.length){sumMin+=lo;sumMax+=hi}const range=expectedRange(p.base[k],level,q,k,clan);const pct=c.length?((lo+hi)/2)/32*100:Math.min(100,(stats[k]||0)/(range.max||1)*100);const label=c.length?(lo===hi?'✓ '+lo:lo+'–'+hi):(stats[k]>range.max?'↑':'?');const detail=c.length?(lo===hi?'Exato':'Entre valores')+' · stat '+(stats[k]||'—')+'/'+range.max:'fora ou incompleto · esperado '+range.min+'–'+range.max;return '<div class="iv-row"><b style="color:'+COLORS[k]+'">'+LABELS[k]+'</b><div><span class="track"><i style="width:'+pct+'%;background:'+COLORS[k]+'"></i></span><small>'+detail+'</small></div><strong>'+label+'</strong></div>'}).join('');const role=roleFromMoves(p);const overall=overallScore(p,q,map,confirmed);const moves=bestMoves(p).map(m=>'<article class="move"><div><b>'+m.name+'</b><small>'+(TYPE_NAMES[m.type]||m.type)+' · '+(m.category||'')+' · Nv '+m.learnLevel+'</small></div><strong>'+m.power+'</strong></article>').join('')||'<p>Nenhum golpe encontrado no catálogo.</p>';const [rarity,color]=qualityInfo(q);const note=confirmed===6?'Precisão completa':'Estimativa parcial: melhore a precisão subindo de nível ou conferindo stats';$('#result').innerHTML='<div class="result-helper"><div class="result-top"><div class="poke-title"><img src="'+(p.image||'')+'" alt=""><div><h2>'+p.name+' <small>Lv '+level+'</small></h2><p><span style="color:'+color+'">'+rarity+' · '+q.toFixed(3)+'</span> · '+role.label+'</p><p>'+typeBadge(p.type1)+' '+typeBadge(p.type2)+'</p></div></div><div class="overall"><strong>'+overall+'%</strong><small>Overall</small></div></div><div class="result-body"><div class="iv-metrics"><div class="metric"><b>'+(sumMin===sumMax?sumMin:sumMin+'–'+sumMax)+'</b><small>IV total</small></div><div class="metric"><b>'+confirmed+'/6</b><small>Confirmados</small></div><div class="metric"><b>Nv '+Math.max(...KEYS.map(k=>precisionLevel(p.base[k],q,k,clan)))+'</b><small>Precisão total</small></div><div class="metric"><b>'+note.split(':')[0]+'</b><small>Status</small></div></div><div>'+rows+'</div><h2>Golpes principais</h2><div class="moves">'+moves+'</div><div class="insights"><div class="insight"><h3>Leitura rápida</h3><ul><li>Overall compara IV, raridade, atributos úteis para a função e qualidade dos golpes.</li><li>O topo de referência usa qualidade Mítica 2.60 como padrão competitivo atual.</li><li>O nível atual não pesa no Overall, só ajuda a descobrir os IVs.</li></ul></div><div class="insight"><h3>Uso sugerido</h3><ul><li>Função provável: '+role.label+'.</li><li>Atributos mais importantes: '+(role.important||[role.main,role.secondary]).map(k=>LABELS[k]).filter((v,i,a)=>a.indexOf(v)===i).join(', ')+'.</li><li>Velocidade aparece como informação, mas tem peso baixo no Overall até haver confirmação de impacto real no combate.</li><li>'+note+'.</li></ul></div></div></div></div>'}
 
 function readNumberAfterLabels(flat,tight,labels){
   for(const label of labels){
@@ -287,7 +287,64 @@ window.__idleVerseIvParseDebug=function(){
 };
 
 async function loadCatalog(){if(catalog.length)return catalog;if(catalogReady)return catalogReady;catalogReady=(async()=>{let data=null;let lastError=null;for(const url of ['piw-creatures.json','./piw-creatures.json','/piw-creatures.json']){try{const res=await fetch(url,{cache:'no-store'});if(res.ok){data=await res.json();break}else{lastError=new Error(url+' HTTP '+res.status)}}catch(e){lastError=e}}if(!data){const el=document.getElementById('piwCatalogData');if(el&&el.textContent.trim())data=JSON.parse(el.textContent)}if(!data)throw lastError||new Error('catálogo indisponível');catalog=data;$('#pokemonList').innerHTML=catalog.map(p=>'<option value="#'+String(p.id).padStart(3,'0')+' '+p.name+'"></option>').join('');if(lastOcrText)fillFromText(lastOcrText);return catalog})().catch(e=>{catalogReady=null;throw e});return catalogReady}
-async function runOcr(file){const status=$('#ocrStatus');$('#preview').src=URL.createObjectURL(file);$('#preview').style.display='block';status.textContent='Lendo imagem... pode levar alguns segundos.';status.className='status';try{if(!window.Tesseract)throw new Error('OCR ainda não carregou. Tente novamente em alguns segundos.');const {data}=await Tesseract.recognize(file,'por+eng');$('#ocrText').value=data.text||'';fillFromText(data.text||'');status.textContent='Texto lido. Confira os números antes de calcular.';status.className='status ok';}catch(e){status.textContent='Não foi possível ler automaticamente: '+(e.message||e)+'. Preencha manualmente.';status.className='status error'}}
+
+function parsedFieldCount(parsed){
+  if(!parsed)return 0;
+  let n=0;
+  if(parsed.pokemon)n++;
+  if(parsed.level!=null)n++;
+  if(parsed.quality&&parsed.quality!==1)n++;
+  if(parsed.ivTotal!=null)n++;
+  for(const value of Object.values(parsed.stats||{}))if(value!=null)n++;
+  return n;
+}
+async function prepareImageForOcr(file){
+  try{
+    const url=URL.createObjectURL(file);
+    const img=await new Promise((resolve,reject)=>{
+      const image=new Image();
+      image.onload=()=>resolve(image);
+      image.onerror=reject;
+      image.src=url;
+    });
+    const scale=Math.max(2,Math.min(5,Math.ceil(1200/Math.max(1,img.width))));
+    const canvas=document.createElement('canvas');
+    canvas.width=Math.round(img.width*scale);
+    canvas.height=Math.round(img.height*scale);
+    const ctx=canvas.getContext('2d',{willReadFrequently:true});
+    ctx.imageSmoothingEnabled=false;
+    ctx.drawImage(img,0,0,canvas.width,canvas.height);
+    const data=ctx.getImageData(0,0,canvas.width,canvas.height);
+    const px=data.data;
+    for(let i=0;i<px.length;i+=4){
+      let g=0.299*px[i]+0.587*px[i+1]+0.114*px[i+2];
+      g=(g-128)*1.85+128;
+      g=Math.max(0,Math.min(255,g));
+      if(g>185)g=255;
+      else if(g<70)g=0;
+      px[i]=px[i+1]=px[i+2]=g;
+    }
+    ctx.putImageData(data,0,0);
+    URL.revokeObjectURL(url);
+    return await new Promise(resolve=>canvas.toBlob(blob=>resolve(blob||file),'image/png'));
+  }catch(e){
+    return file;
+  }
+}
+function normalizeOcrTextForPiw(text){
+  return String(text||'')
+    .replace(/[|]/g,'I')
+    .replace(/\bN[uy]\s*([0-9])/gi,'Nv$1')
+    .replace(/\bIVI\b/gi,'IV')
+    .replace(/\bQua[lI1]idade\b/gi,'Qualidade')
+    .replace(/\bLend[áa]?r?[i1]a\b/gi,'Lendaria')
+    .replace(/\bM[ií]t[i1]ca\b/gi,'Mitica')
+    .replace(/\bSp\s*A\b/gi,'SpA')
+    .replace(/\bSp\s*D\b/gi,'SpD')
+    .replace(/\bVeI\b/g,'Vel');
+}
+
+async function runOcr(file){const status=$('#ocrStatus');$('#preview').src=URL.createObjectURL(file);$('#preview').style.display='block';status.textContent='Preparando imagem e lendo texto... pode levar alguns segundos.';status.className='status';try{if(!window.Tesseract)throw new Error('OCR ainda não carregou. Tente novamente em alguns segundos.');const prepared=await prepareImageForOcr(file);let result=await Tesseract.recognize(prepared,'eng+por',{tessedit_pageseg_mode:'6'});let text=normalizeOcrTextForPiw(result?.data?.text||'');let parsed=parsePiwTooltipText(text);if(parsedFieldCount(parsed)<3){const retry=await Tesseract.recognize(file,'eng+por',{tessedit_pageseg_mode:'6'});const retryText=normalizeOcrTextForPiw(retry?.data?.text||'');const retryParsed=parsePiwTooltipText(retryText);if(parsedFieldCount(retryParsed)>parsedFieldCount(parsed)){text=retryText;parsed=retryParsed}}$('#ocrText').value=text;fillFromText(text);const count=parsedFieldCount(parsePiwTooltipText(text));if(count>0){status.textContent='Texto lido. Campos detectados: '+count+'. Confira os números antes de calcular.';status.className='status ok'}else{status.textContent='Texto lido, mas não consegui reconhecer os campos. Tente um print mais aproximado ou preencha manualmente.';status.className='status error'}}catch(e){status.textContent='Não foi possível ler automaticamente: '+(e.message||e)+'. Preencha manualmente.';status.className='status error'}}
 function init(){const grid=$('#statGrid');grid.innerHTML=KEYS.map(k=>'<div class="stat-input"><label><span style="color:'+COLORS[k]+'">'+LABELS[k]+'</span><small>stat do jogo</small></label><input data-stat="'+k+'" type="number" min="0" placeholder="0"></div>').join('');loadCatalog().catch(e=>{$('#ocrStatus').textContent='Não foi possível carregar o catálogo: '+e.message;$('#ocrStatus').className='status error'});$('#calcBtn').addEventListener('click',calculate);$('#clearBtn').addEventListener('click',()=>{document.querySelectorAll('input').forEach(i=>{if(i.type!=='file')i.value=''});$('#levelInput').value=1;$('#qualityInput').value='1.000';$('#clanInput').value=0;$('#ocrText').value='';$('#preview').style.display='none';$('#result').innerHTML=`<div class="result-empty"><div><span class="eyebrow small">Resultado</span><h2>Cole um print para começar</h2><p>Quando calcular, esta área vira o IV Helper completo com barras, IVs, precisão, golpes e Overall.</p><ol><li>Cole ou envie o print no topo.</li><li>Confira nível, Quality e stats.</li><li>Escolha o Pokémon e clique em calcular.</li></ol></div></div>`});$('#imageInput').addEventListener('change',e=>{const file=e.target.files?.[0];if(file)runOcr(file)});$('#ocrText').addEventListener('change',e=>fillFromText(e.target.value))}
 init();
 </script>
@@ -323,10 +380,12 @@ init();
   });
   input.addEventListener('change', () => setFileName(input.files?.[0] || null));
   document.addEventListener('paste', (event) => {
+    const files = Array.from(event.clipboardData?.files || []);
+    const directFile = files.find((file) => /^image\//i.test(file.type || ''));
     const items = Array.from(event.clipboardData?.items || []);
     const imageItem = items.find((item) => /^image\//i.test(item.type || ''));
-    if (!imageItem) return;
-    const file = imageItem.getAsFile();
+    const file = directFile || imageItem?.getAsFile();
+    if (!file) return;
     if (processFile(file, 'paste')) {
       event.preventDefault();
       zone.classList.add('dragover');

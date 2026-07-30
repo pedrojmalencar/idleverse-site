@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IV Helper Online - Idle Verse</title>
+  <meta name="description" content="Teste online o IV Helper do Idle Verse para PokeIdle World. Envie uma imagem dos stats ou preencha manualmente para analisar IV, raridade, golpes e Overall.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <script>const LINK_COMPRA_BASICO="checkout.html?plano=basico";const LINK_COMPRA_VIP="checkout.html?plano=vip";</script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}:root{--bg:#090d14;--panel:#111925;--panel2:#0c131d;--border:#28384d;--text:#eef3fb;--muted:#94a3b8;--gold:#f6c445;--blue:#7fd8ff;--green:#67dc8b;--red:#ff7676;--purple:#c084fc;--accent:#f6c445;--text-dim:#94a3b8}html{scroll-behavior:smooth}body{min-height:100vh;background:radial-gradient(circle at 12% 0%,rgba(127,216,255,.16),transparent 34%),radial-gradient(circle at 86% 8%,rgba(246,196,69,.16),transparent 30%),linear-gradient(180deg,#0b1019,var(--bg));color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.6;overflow-x:hidden}.wrap{width:min(1180px,calc(100% - 32px));margin:0 auto}header{position:sticky;top:0;z-index:50;background:rgba(15,17,21,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}.nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0;gap:16px}.logo{display:flex;align-items:center;gap:8px;font-size:18px;font-weight:800;letter-spacing:1.5px;text-decoration:none;color:var(--text);white-space:nowrap;font-family:"Space Grotesk",Inter,sans-serif}.logo span{color:var(--accent);font-size:22px}.nav-links{display:flex;gap:24px;font-size:14px}.nav-links a{color:var(--muted);text-decoration:none}.nav-links a:hover,.nav-links a.active{color:var(--text)}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 18px;border:1px solid rgba(255,255,255,.13);border-radius:999px;color:var(--text);background:rgba(255,255,255,.05);font-weight:800;text-decoration:none;transition:.15s;cursor:pointer;font-family:"Space Grotesk",Inter,sans-serif}.btn:hover{transform:translateY(-1px);border-color:rgba(246,196,69,.55);background:rgba(246,196,69,.1)}.btn-primary{border-color:rgba(246,196,69,.75);color:#14100a;background:linear-gradient(135deg,#ffe082,var(--gold));box-shadow:0 12px 34px rgba(246,196,69,.18)}.nav-toggle{display:none;align-items:center;justify-content:center;min-height:38px;padding:0 13px;border:1px solid rgba(255,255,255,.16);border-radius:999px;background:rgba(255,255,255,.06);color:var(--text);font-weight:800;cursor:pointer}h1,h2,h3{font-family:"Space Grotesk",Inter,sans-serif;line-height:1.08}.hero{padding:44px 0 28px}.eyebrow{display:inline-flex;gap:8px;align-items:center;padding:7px 12px;border:1px solid rgba(127,216,255,.32);border-radius:999px;color:var(--blue);background:rgba(127,216,255,.08);font-size:13px;font-weight:800}.hero-grid{display:grid;grid-template-columns:minmax(0,.95fr) minmax(420px,1.05fr);gap:34px;align-items:center}.hero h1{margin-top:16px;font-size:clamp(38px,5vw,66px);letter-spacing:-.045em}.hero h1 em{color:var(--gold);font-style:normal}.lead{margin-top:20px;color:#c2cbda;font-size:18px;max-width:680px}.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}.notice{margin-top:18px;padding:13px 15px;border:1px solid rgba(127,216,255,.22);border-radius:16px;background:rgba(127,216,255,.07);color:#c9d6e8;font-size:14px}.panel{border:1px solid var(--border);border-radius:24px;background:rgba(17,25,37,.9);box-shadow:0 20px 70px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.04)}.demo-card{padding:22px}.demo-card h2{color:var(--gold);font-size:26px}.mini-helper{margin-top:18px;border:1px solid rgba(127,216,255,.2);border-radius:18px;background:rgba(5,10,18,.72);padding:18px}.mini-head{display:flex;gap:14px;align-items:center}.mini-head img{width:76px;height:76px;object-fit:contain;image-rendering:auto}.mini-head strong{font-size:23px}.tag{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:999px;background:rgba(127,216,255,.1);border:1px solid rgba(127,216,255,.22);color:#dcecff;font-size:12px;font-weight:800}.tag img{height:18px}.bars{display:grid;gap:10px;margin-top:18px}.bar{display:grid;grid-template-columns:44px 1fr 52px;gap:10px;align-items:center;font-size:13px}.bar b{font-weight:900}.track{height:9px;background:#243147;border-radius:999px;overflow:hidden}.track i{display:block;height:100%;border-radius:999px}.metric-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}.metric{padding:12px;border-radius:14px;background:#0b111b;border:1px solid rgba(255,255,255,.07);text-align:center}.metric b{display:block;color:#fff;font-size:22px}.metric small{color:var(--muted);text-transform:uppercase;font-size:10px;font-weight:900}.tool{padding:34px 0 70px}.tool-grid{display:grid;grid-template-columns:minmax(320px,.82fr) minmax(0,1.18fr);gap:22px}.card{padding:20px}.card h2{font-size:24px;color:#fff}.card p{color:var(--muted);margin-top:8px;font-size:14px}.field{display:grid;gap:6px;margin-top:12px}.field span{color:#aebbd0;font-size:12px;font-weight:800}.field input,.field select,.field textarea{width:100%;min-height:42px;border:1px solid #34445c;border-radius:10px;background:#09101a;color:var(--text);padding:10px 12px;font:inherit}.field textarea{min-height:120px;resize:vertical}.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}.stat-input{border:1px solid #34445c;border-radius:13px;background:#09101a;padding:10px}.stat-input label{display:flex;justify-content:space-between;gap:8px;color:#aebbd0;font-size:12px;font-weight:900}.stat-input input{margin-top:6px;min-height:36px}.upload{margin-top:14px;padding:16px;border:1px dashed #3c5875;border-radius:16px;background:rgba(127,216,255,.05)}.upload input{margin-top:10px}.preview{display:none;margin-top:12px;max-height:220px;width:100%;object-fit:contain;border:1px solid var(--border);border-radius:14px;background:#02050a}.status{margin-top:10px;color:#aebbd0;font-size:13px}.result{min-height:520px;padding:22px}.result-empty{height:100%;display:grid;place-items:center;text-align:center;color:var(--muted);border:1px dashed #34445c;border-radius:18px;padding:28px}.result-helper{border:1px solid rgba(127,216,255,.25);border-radius:22px;background:rgba(5,10,18,.74);overflow:hidden}.result-top{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:20px;border-bottom:1px solid rgba(255,255,255,.08)}.poke-title{display:flex;gap:16px;align-items:center}.poke-title img{width:96px;height:96px;object-fit:contain}.poke-title h2{font-size:31px}.poke-title p{color:#b7c4d8}.overall{min-width:142px;text-align:center}.overall strong{display:block;color:var(--blue);font-size:44px;line-height:1}.overall small{color:var(--muted);font-size:11px;text-transform:uppercase;font-weight:900}.result-body{padding:18px 20px;display:grid;gap:18px}.iv-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.iv-row{display:grid;grid-template-columns:44px 1fr 76px;gap:10px;align-items:center}.iv-row .track{height:12px}.iv-row small{display:block;color:#9badc4;font-size:11px;margin-top:3px}.iv-row strong{text-align:right}.moves{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.move{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px;border:1px solid rgba(103,220,139,.22);border-radius:10px;background:rgba(10,20,17,.65)}.move b{display:block}.move small{color:#95a4ba;font-size:11px}.move strong{color:var(--gold);font-size:18px}.insights{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.insight{padding:14px;border:1px solid rgba(255,255,255,.1);border-radius:14px;background:rgba(255,255,255,.035)}.insight h3{font-size:16px;color:var(--gold);margin-bottom:8px}.insight ul{padding-left:18px;color:#d2ddec;font-size:14px}.ocr-text{font-size:12px;color:#95a4ba;white-space:pre-wrap;max-height:150px;overflow:auto;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:10px;background:#070d16}.error{color:#ffb0b0}.ok{color:#7df0a1}@media(max-width:940px){.hero-grid,.tool-grid{grid-template-columns:1fr}.result{min-height:0}.nav{position:relative;flex-wrap:wrap}.nav-toggle{display:inline-flex;margin-left:auto}.nav-links{display:none!important;position:absolute;left:16px;right:16px;top:calc(100% + 8px);z-index:80;flex-direction:column;gap:0;padding:8px;border:1px solid var(--border);border-radius:16px;background:rgba(10,15,23,.98);box-shadow:0 18px 45px rgba(0,0,0,.55)}header.nav-open .nav-links{display:flex!important}.nav-links a{display:block;padding:13px 14px;border-radius:10px}.nav-links a:hover,.nav-links a.active{background:rgba(246,196,69,.1);color:var(--text)}body.nav-open{overflow:hidden}}@media(max-width:620px){.wrap{width:min(100% - 22px,1180px)}.hero{padding-top:28px}.tool{padding-top:18px}.card,.result,.demo-card{padding:16px;border-radius:18px}.form-grid,.stat-grid,.iv-metrics,.moves,.insights,.metric-row{grid-template-columns:1fr}.result-top{align-items:flex-start;flex-direction:column}.overall{text-align:left}.poke-title img{width:74px;height:74px}.poke-title h2{font-size:24px}.iv-row{grid-template-columns:38px 1fr 62px}.logo{font-size:15px}.nav .btn-primary{order:3;width:100%}}
+  </style>
+<style id="iv-helper-paste-fix">
+.tool-grid{align-items:start}
+.card,.result{min-width:0}
+.stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.stat-input{min-width:0}
+.stat-input input{display:block;width:100%;min-width:0;margin-top:6px;min-height:38px;border:1px solid #34445c;border-radius:10px;background:#09101a;color:var(--text);padding:9px 10px;font:inherit}
+.stat-input small{white-space:nowrap}
+.upload input[type=file]{position:absolute;inline-size:1px;block-size:1px;opacity:0;pointer-events:none}
+.paste-zone{display:grid;gap:5px;margin-top:12px;padding:17px;border:1px dashed rgba(127,216,255,.46);border-radius:16px;background:rgba(127,216,255,.075);cursor:pointer;transition:.15s;outline:none}
+.paste-zone:hover,.paste-zone:focus,.paste-zone.dragover{border-color:var(--gold);background:rgba(246,196,69,.08);transform:translateY(-1px)}
+.paste-zone b{display:block;color:#fff;font-size:15px}
+.paste-zone span,.paste-zone small{display:block;color:#aebbd0;font-size:13px}
+.file-name{margin-top:8px;color:#9badc4;font-size:12px}
+@media(max-width:520px){.stat-grid{grid-template-columns:1fr}.paste-zone{padding:14px}}
+</style>
+<style id="iv-helper-flow-fix">
+.tool{padding-top:28px}
+.tool-grid{grid-template-columns:minmax(420px,.98fr) minmax(420px,1.02fr);align-items:start}
+.tool-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px}
+.tool-head p{max-width:310px;margin:0;font-size:13px;color:#aebbd0}
+.eyebrow.small{padding:5px 9px;font-size:11px;margin-bottom:8px}
+.card-section{margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08)}
+.card-section h3{margin-bottom:10px;font-size:16px;color:var(--gold)}
+.field.no-margin{margin-top:0}
+.form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.stat-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.upload{margin-top:0;padding:15px;background:linear-gradient(135deg,rgba(127,216,255,.08),rgba(246,196,69,.045));border-color:rgba(127,216,255,.38)}
+.paste-zone{grid-template-columns:1fr auto;align-items:center}
+.preview{max-height:170px}
+.compact-actions{margin-top:18px}
+.ocr-details{margin-top:14px;border:1px solid rgba(255,255,255,.09);border-radius:14px;background:rgba(255,255,255,.03);overflow:hidden}
+.ocr-details summary{padding:11px 13px;cursor:pointer;color:#b9c7da;font-weight:800;font-size:13px}
+.ocr-details .field{padding:0 13px 13px;margin-top:0}
+.result{min-height:430px}
+.result-empty{height:auto;min-height:386px;place-items:start;text-align:left;align-content:start}
+.result-empty h2{margin-top:10px}
+.result-empty p{max-width:520px}
+.result-empty ol{margin-top:18px;padding-left:21px;color:#d6e1f0}
+.result-empty li{margin:8px 0}
+@media(max-width:980px){.tool-grid{grid-template-columns:1fr}.tool-head{display:block}.tool-head p{max-width:none;margin-top:8px}.result{min-height:0}.result-empty{min-height:0}}
+@media(max-width:660px){.form-grid,.stat-grid{grid-template-columns:1fr}.paste-zone{grid-template-columns:1fr}.preview{max-height:220px}}
+</style>
+</head>
+<body>
+<header><div class="wrap nav"><a class="logo" href="index.html#inicio"><span>&#11042;</span>IDLE VERSE</a><button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false">Menu</button><nav class="nav-links"><a href="index.html#recursos">Recursos</a><a href="pokeidle.html">Modulo PokeIdle</a><a class="active" href="iv-helper.html">IV Helper</a><a href="index.html#como-funciona">Como funciona</a><a href="index.html#planos">Planos</a><a href="index.html#duvidas">Duvidas</a></nav><a class="btn btn-primary" href="index.html#planos">Quero o Idle Verse</a></div></header>
+<main>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">Ferramenta online para PokeIdle World</span>
+        <h1><em>IV Helper</em> direto no navegador.</h1>
+        <p class="lead">Pesquise um Pokémon, preencha os stats ou envie um print da janela de atributos. O Idle Verse calcula os IVs possíveis, mostra golpes, função e um Overall rápido para comparar potencial.</p>
+        <div class="hero-actions"><a class="btn btn-primary" href="#ferramenta">Usar IV Helper</a><a class="btn" href="pokeidle.html">Ver módulo PokeIdle</a></div>
+        <div class="notice">A leitura por imagem é experimental e roda no seu próprio navegador. Se o OCR errar algum número, é só corrigir manualmente antes de calcular.</div>
+      </div>
+      <aside class="panel demo-card">
+        <h2>Prévia do resultado</h2>
+        <p>O objetivo é dar a mesma leitura rápida do app: IVs por atributo, golpes relevantes e potencial geral.</p>
+        <div class="mini-helper">
+          <div class="mini-head"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/130.png" alt=""><div><strong>Gyarados</strong><p><span class="tag">Água</span> <span class="tag">Voador</span></p></div></div>
+          <div class="metric-row"><div class="metric"><b>151</b><small>IV total</small></div><div class="metric"><b>5/6</b><small>Confirmados</small></div><div class="metric"><b>86%</b><small>Overall</small></div></div>
+          <div class="bars"><div class="bar"><b style="color:#4fd675">HP</b><span class="track"><i style="width:92%;background:#4fd675"></i></span><strong>29</strong></div><div class="bar"><b style="color:#f1a43c">Atk</b><span class="track"><i style="width:100%;background:#f1a43c"></i></span><strong>32</strong></div><div class="bar"><b style="color:#5ca9ee">SpA</b><span class="track"><i style="width:44%;background:#5ca9ee"></i></span><strong>14</strong></div></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+  <section class="tool" id="ferramenta">
+    <div class="wrap tool-grid">
+      <section class="panel card">
+        <div class="tool-head">
+          <div>
+            <span class="eyebrow small">IV Helper Online</span>
+            <h2>Analise pelo print ou manualmente</h2>
+          </div>
+          <p>O fluxo mais rápido é colar o print primeiro. Depois confira os números, escolha o Pokémon e calcule.</p>
+        </div>
+        <div class="upload">
+          <strong>1. Cole ou envie o print dos stats</strong>
+          <p>Printou o Pokémon? Clique aqui e aperte <b>Ctrl+V</b>, ou arraste a imagem para esta área.</p>
+          <div class="paste-zone" id="pasteZone" tabindex="0" role="button" aria-label="Colar ou escolher print dos stats">
+            <div><b>Ctrl+V para colar o print</b><span>ou clique aqui para escolher uma imagem</span></div>
+            <small>PNG, JPG ou imagem copiada da área de transferência</small>
+          </div>
+          <input id="imageInput" type="file" accept="image/*">
+          <div class="file-name" id="fileName">Nenhuma imagem selecionada.</div>
+          <img id="preview" class="preview" alt="Prévia do print">
+          <div id="ocrStatus" class="status">OCR opcional. O cálculo manual funciona sem imagem.</div>
+        </div>
+        <div class="card-section">
+          <h3>2. Confira as informações</h3>
+          <div class="form-grid">
+            <label class="field"><span>Nível</span><input id="levelInput" type="number" min="1" max="500" value="1"></label>
+            <label class="field"><span>Quality</span><input id="qualityInput" type="number" min="0.001" max="9.999" step="0.001" value="1.000"></label>
+            <label class="field"><span>IV total, se aparecer</span><input id="ivTotalInput" type="number" min="0" max="192" placeholder="Opcional"></label>
+            <label class="field"><span>Bônus de clã %</span><input id="clanInput" type="number" min="0" max="100" step="1" value="0"></label>
+          </div>
+        </div>
+        <div class="card-section">
+          <h3>3. Stats mostrados no jogo</h3>
+          <div class="stat-grid" id="statGrid"></div>
+        </div>
+        <div class="card-section">
+          <h3>4. Escolha o Pokémon</h3>
+          <label class="field no-margin"><span>Pokémon</span><input id="pokemonInput" list="pokemonList" placeholder="Ex: Lapras, Gengar, Gyarados"><datalist id="pokemonList"></datalist></label>
+        </div>
+        <div class="hero-actions compact-actions"><button class="btn btn-primary" id="calcBtn">Calcular IV</button><button class="btn" id="clearBtn">Limpar</button></div>
+        <details class="ocr-details"><summary>Ver texto lido da imagem</summary><label class="field"><span>Texto extraído</span><textarea id="ocrText" placeholder="O texto extraído do print aparece aqui. Você também pode colar texto manualmente."></textarea></label></details>
+      </section>
+      <section class="panel result" id="result"><div class="result-empty"><div><span class="eyebrow small">Resultado</span><h2>Cole um print para começar</h2><p>Quando calcular, esta área vira o IV Helper completo com barras, IVs, precisão, golpes e Overall.</p><ol><li>Cole ou envie o print no topo.</li><li>Confira nível, Quality e stats.</li><li>Escolha o Pokémon e clique em calcular.</li></ol></div></div></section>
+    </div>
+  </section>
+</main>
+<script>
+const TYPE_IDS={"NORMAL":1,"FIGHTING":2,"FLYING":3,"POISON":4,"GROUND":5,"ROCK":6,"BUG":7,"GHOST":8,"STEEL":9,"FIRE":10,"WATER":11,"GRASS":12,"ELECTRIC":13,"PSYCHIC":14,"ICE":15,"DRAGON":16,"DARK":17,"FAIRY":18};
+const TYPE_NAMES={"NORMAL":"Normal","FIGHTING":"Lutador","FLYING":"Voador","POISON":"Veneno","GROUND":"Terra","ROCK":"Pedra","BUG":"Inseto","GHOST":"Fantasma","STEEL":"Aço","FIRE":"Fogo","WATER":"Água","GRASS":"Planta","ELECTRIC":"Elétrico","PSYCHIC":"Psíquico","ICE":"Gelo","DRAGON":"Dragão","DARK":"Sombrio","FAIRY":"Fada"};
+const KEYS=['hp','atk','def','spAtk','spDef','speed'];
+const LABELS={hp:'HP',atk:'Atk',def:'Def',spAtk:'SpA',spDef:'SpD',speed:'Spe'};
+const COLORS={hp:'#4fd675',atk:'#f1a43c',def:'#f5d44e',spAtk:'#5ca9ee',spDef:'#77d5c0',speed:'#e76c9c'};
+const EXP={hp:.95,atk:.8,def:.8,spAtk:.8,spDef:.8,speed:.95};
+const CLAN_STATS=new Set(['atk','def','spAtk','spDef']);
+let catalog=[];let catalogReady=null;let lastOcrText="";
+const $=(s)=>document.querySelector(s);
+function norm(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
+function typeBadge(type){if(!type)return'';const id=TYPE_IDS[type];const img=id?'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/brilliant-diamond-shining-pearl/'+id+'.png':'';return '<span class="tag">'+(img?'<img src="'+img+'" alt="">':'')+(TYPE_NAMES[type]||type)+'</span>'}
+function qualityInfo(q){return q>=4?['Divina','#dbefff']:q>=3?['Anciã','#d8ae48']:q>=2?['Mítica','#b86cff']:q>=1.7?['Lendária','#ff8c3c']:q>=1.5?['Épica','#f0c040']:q>=1.3?['Rara','#b06cff']:q>=1.1?['Incomum','#7fd4ff']:q>=1?['Comum','#63d873']:['Fraca','#9aa6b3']}
+function calcStat(base,growth,level,quality,key){return Math.round(level/100*(base+2*growth)*Math.pow(quality,EXP[key]))}
+function finalStat(base,growth,level,quality,key,clan=0){const raw=calcStat(base,growth,level,quality,key);return CLAN_STATS.has(key)?Math.round(raw*(1+clan/100)):raw}
+function expectedRange(base,level,quality,key,clan=0){return{min:finalStat(base,1,level,quality,key,clan),max:finalStat(base,32,level,quality,key,clan)}}
+function possibleGrowth(base,observed,level,quality,key,clan=0){if(!observed||!base||!level||!quality)return[];return Array.from({length:32},(_,i)=>i+1).filter(g=>finalStat(base,g,level,quality,key,clan)===observed)}
+function precisionLevel(base,quality,key,clan=0){for(let level=1;level<=500;level++){const values=new Set(Array.from({length:32},(_,i)=>finalStat(base,i+1,level,quality,key,clan)));if(values.size===32)return level}return 500}
+function refineByTotal(map,total){if(!(total>0)||KEYS.some(k=>!map[k]?.length))return map;const out={};for(const key of KEYS){let sums=new Set([0]);for(const other of KEYS.filter(k=>k!==key)){const next=new Set();for(const sum of sums)for(const v of map[other])next.add(sum+v);sums=next}out[key]=map[key].filter(v=>sums.has(total-v))}return KEYS.every(k=>out[k].length)?out:map}
+function parseQuality(text,fallback=1){
+  const raw=String(text||'');
+  const clean=raw.replace(/,/g,'.');
+  const flat=norm(clean);
+  const compact=flat.replace(/\s+/g,' ');
+  const decimalValue=(value)=>{
+    const n=Number(String(value||'').replace(/\s+/g,'.').replace(/[^0-9.]/g,''));
+    return Number.isFinite(n)&&n>0&&n<=9.999?n:null;
+  };
+  const rarityWords='divina|ancia|anciao|ancient|mitica|mythic|lendaria|legendaria|legendary|epica|epic|rara|rare|incomum|uncommon|comum|common|fraca|weak';
+  const patterns=[
+    new RegExp('(?:quality|qualidade|\\bq\\b)\\s*[:=]?\\s*([0-9]+(?:[\\s.][0-9]+)?)','i'),
+    /[×x]\s*([0-9]+(?:[\s.][0-9]+)?)/i,
+    new RegExp('(?:'+rarityWords+')[^0-9]{0,28}([0-9]+(?:[\\s.][0-9]+)?)','i'),
+    new RegExp('([0-9]+(?:[\\s.][0-9]+)?)[^a-z0-9]{0,28}(?:'+rarityWords+')','i')
+  ];
+  for(const pattern of patterns){
+    const n=decimalValue(compact.match(pattern)?.[1]);
+    if(n)return n;
+  }
+  const rarityIndex=compact.search(new RegExp(rarityWords,'i'));
+  if(rarityIndex>=0){
+    const around=compact.slice(Math.max(0,rarityIndex-35),rarityIndex+90);
+    const n=[...around.matchAll(/(?:^|[^0-9])([0-9]+(?:[\s.][0-9]+)?)(?=$|[^0-9])/g)]
+      .map(m=>decimalValue(m[1]))
+      .find(v=>v&&v>=.5&&v<=9.999);
+    if(n)return n;
+  }
+  const dec=[...compact.matchAll(/(?:^|[^0-9])([0-9]+\.[0-9]+)(?=$|[^0-9])/g)]
+    .map(m=>decimalValue(m[1]))
+    .find(n=>n&&n>=.5&&n<=9.999);
+  return dec||fallback
+}
+function levenshtein(a,b){a=norm(a);b=norm(b);const dp=Array.from({length:a.length+1},()=>Array(b.length+1).fill(0));for(let i=0;i<=a.length;i++)dp[i][0]=i;for(let j=0;j<=b.length;j++)dp[0][j]=j;for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)dp[i][j]=Math.min(dp[i-1][j]+1,dp[i][j-1]+1,dp[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return dp[a.length][b.length]}
+function pokemonFromText(text){
+  const clean=norm(text).replace(/[^a-z0-9# ]+/g,' ');
+  const exact=catalog.find(p=>clean.includes(norm(p.name)));
+  if(exact)return exact;
+  const tokens=clean.split(/\s+/).filter(Boolean);
+  let best=null;
+  for(const p of catalog){
+    const name=norm(p.name);
+    for(const token of tokens){
+      if(Math.abs(token.length-name.length)>2)continue;
+      const dist=levenshtein(token,name);
+      const limit=name.length<=5?1:2;
+      if(dist<=limit&&(!best||dist<best.dist))best={p,dist};
+    }
+  }
+  return best?.p||null;
+}
+function pokemonByInput(){const value=$('#pokemonInput').value;const q=norm(value).replace(/^#?\d+\s*/,'').trim();const id=Number(String(value).match(/#?(\d+)/)?.[1]);return catalog.find(p=>p.id===id)||catalog.find(p=>norm(p.name)===q)||catalog.find(p=>norm(p.name).includes(q))||pokemonFromText(lastOcrText||$('#ocrText')?.value||'')}
+function readStats(){return Object.fromEntries(KEYS.map(k=>[k,Number(document.querySelector('[data-stat="'+k+'"]').value)||0]))}
+function bestMoves(p){return (p.moves||[]).slice().sort((a,b)=>b.power-a.power).slice(0,8)}
+function roleFromMoves(p){const moves=bestMoves(p);const phys=moves.filter(m=>/PHYSICAL|FISICO|FÍSICO/.test(m.category)).reduce((s,m)=>s+m.power,0);const spec=moves.filter(m=>/SPECIAL|ESPECIAL/.test(m.category)).reduce((s,m)=>s+m.power,0);if(phys>spec*1.25)return{label:'Atacante físico',main:'atk',secondary:'speed'};if(spec>phys*1.25)return{label:'Atacante especial',main:'spAtk',secondary:'speed'};if((p.base.def+p.base.spDef+p.base.hp)>(p.base.atk+p.base.spAtk+p.base.speed)*1.08)return{label:'Tanque',main:p.base.def>=p.base.spDef?'def':'spDef',secondary:'hp'};return{label:'Misto',main:'atk',secondary:'spAtk'}}
+function overallScore(p,q,map,confirmed){const avg=KEYS.reduce((s,k)=>{const a=map[k]||[];return s+(a.length?(a[0]+a[a.length-1])/2:16)},0)/6;const ivScore=avg/32*38;const rarityScore=Math.min(1,q/2.6)*24;const role=roleFromMoves(p);const mainAvg=((map[role.main]?.[0]||16)+(map[role.main]?.at(-1)||16))/2;const secAvg=((map[role.secondary]?.[0]||16)+(map[role.secondary]?.at(-1)||16))/2;const roleScore=((mainAvg/32)*.68+(secAvg/32)*.32)*22;const bulkAvg=(['hp','def','spDef'].reduce((s,k)=>{const a=map[k]||[];return s+(a.length?(a[0]+a.at(-1))/2:16)},0)/3)/32;const moveTypes=new Set(bestMoves(p).filter(m=>m.power>0).map(m=>m.type));const power=Math.min(1,bestMoves(p).reduce((s,m)=>s+m.power,0)/720);const kitScore=(Math.min(1,moveTypes.size/4)*.35+power*.65)*16;const confidence=.72+confirmed/6*.28;return Math.max(1,Math.min(100,Math.round((ivScore+rarityScore+roleScore+bulkAvg*6+kitScore)*confidence)))}
+function calculate(){if(!catalog.length){renderError('Catálogo ainda carregando. Tente novamente em alguns segundos.');loadCatalog().catch(()=>{});return}const p=pokemonByInput();if(!p){renderError('Pokémon não encontrado no catálogo. Confira o nome lido pelo OCR ou digite manualmente.');return}const level=Math.max(1,Math.min(500,Number($('#levelInput').value)||1));const q=Number($('#qualityInput').value)||1;const clan=Number($('#clanInput').value)||0;const total=Number($('#ivTotalInput').value)||0;let map=Object.fromEntries(KEYS.map(k=>[k,possibleGrowth(p.base[k],readStats()[k],level,q,k,clan)]));map=refineByTotal(map,total);renderResult(p,level,q,clan,total,map)}
+function renderError(msg){$('#result').innerHTML='<div class="result-empty error"><div><h2>Não foi possível calcular</h2><p>'+msg+'</p></div></div>'}
+function renderResult(p,level,q,clan,total,map){const stats=readStats();let confirmed=0,sumMin=0,sumMax=0;const rows=KEYS.map(k=>{const c=map[k]||[];const lo=c[0],hi=c.at(-1);if(c.length===1)confirmed++;if(c.length){sumMin+=lo;sumMax+=hi}const range=expectedRange(p.base[k],level,q,k,clan);const pct=c.length?((lo+hi)/2)/32*100:Math.min(100,(stats[k]||0)/(range.max||1)*100);const label=c.length?(lo===hi?'✓ '+lo:lo+'–'+hi):(stats[k]>range.max?'↑':'?');const detail=c.length?(lo===hi?'Exato':'Entre valores')+' · stat '+(stats[k]||'—')+'/'+range.max:'fora ou incompleto · esperado '+range.min+'–'+range.max;return '<div class="iv-row"><b style="color:'+COLORS[k]+'">'+LABELS[k]+'</b><div><span class="track"><i style="width:'+pct+'%;background:'+COLORS[k]+'"></i></span><small>'+detail+'</small></div><strong>'+label+'</strong></div>'}).join('');const role=roleFromMoves(p);const overall=overallScore(p,q,map,confirmed);const moves=bestMoves(p).map(m=>'<article class="move"><div><b>'+m.name+'</b><small>'+(TYPE_NAMES[m.type]||m.type)+' · '+(m.category||'')+' · Nv '+m.learnLevel+'</small></div><strong>'+m.power+'</strong></article>').join('')||'<p>Nenhum golpe encontrado no catálogo.</p>';const [rarity,color]=qualityInfo(q);const note=confirmed===6?'Precisão completa':'Estimativa parcial: melhore a precisão subindo de nível ou conferindo stats';$('#result').innerHTML='<div class="result-helper"><div class="result-top"><div class="poke-title"><img src="'+(p.image||'')+'" alt=""><div><h2>'+p.name+' <small>Lv '+level+'</small></h2><p><span style="color:'+color+'">'+rarity+' · '+q.toFixed(3)+'</span> · '+role.label+'</p><p>'+typeBadge(p.type1)+' '+typeBadge(p.type2)+'</p></div></div><div class="overall"><strong>'+overall+'%</strong><small>Overall</small></div></div><div class="result-body"><div class="iv-metrics"><div class="metric"><b>'+(sumMin===sumMax?sumMin:sumMin+'–'+sumMax)+'</b><small>IV total</small></div><div class="metric"><b>'+confirmed+'/6</b><small>Confirmados</small></div><div class="metric"><b>Nv '+Math.max(...KEYS.map(k=>precisionLevel(p.base[k],q,k,clan)))+'</b><small>Precisão total</small></div><div class="metric"><b>'+note.split(':')[0]+'</b><small>Status</small></div></div><div>'+rows+'</div><h2>Golpes principais</h2><div class="moves">'+moves+'</div><div class="insights"><div class="insight"><h3>Leitura rápida</h3><ul><li>Overall compara IV, raridade, atributos úteis para a função e qualidade dos golpes.</li><li>O topo de referência usa qualidade Mítica 2.60 como padrão competitivo atual.</li><li>O nível atual não pesa no Overall, só ajuda a descobrir os IVs.</li></ul></div><div class="insight"><h3>Uso sugerido</h3><ul><li>Função provável: '+role.label+'.</li><li>Atributos mais importantes: '+LABELS[role.main]+' e '+LABELS[role.secondary]+'.</li><li>'+note+'.</li></ul></div></div></div></div>'}
+
+function readNumberAfterLabels(flat,tight,labels){
+  for(const label of labels){
+    const loose=label.replace(/\s+/g,'\\s*');
+    const re=new RegExp('(?:^|\\b)'+loose+'\\s*[:=\\-]?\\s*(\\d{1,5})(?:\\b|\\D)','i');
+    const m=flat.match(re);
+    if(m)return Number(m[1]);
+    const compact=norm(label).replace(/[^a-z0-9]/g,'');
+    if(compact){
+      const mt=tight.match(new RegExp(compact+'(\\d{1,5})','i'));
+      if(mt)return Number(mt[1]);
+    }
+  }
+  return null;
+}
+function parsePiwTooltipText(text){
+  const raw=String(text||'');
+  const normalized=norm(raw.replace(/,/g,'.'));
+  const flat=normalized.replace(/[^a-z0-9.\/%]+/g,' ').replace(/\s+/g,' ').trim();
+  const tight=flat.replace(/\s+/g,'');
+  const out={pokemon:null,level:null,quality:null,ivTotal:null,stats:{}};
+
+  const lv=flat.match(/\b(?:lv|nv|nivel|n)\s*\.?\s*(\d{1,3})\b/i)||tight.match(/\b(?:lv|nv|nivel|n)(\d{1,3})\b/i);
+  if(lv)out.level=Number(lv[1]);
+
+  const iv=flat.match(/\biv\s*(?:total)?\s*[:=]?\s*(\d{1,3})\s*\/?\s*192\b/i)||tight.match(/\biv(?:total)?(\d{1,3})\/?192\b/i);
+  if(iv)out.ivTotal=Number(iv[1]);
+
+  out.quality=parseQuality(raw,Number($('#qualityInput')?.value)||1);
+  const qNear=flat.match(/\bqualidade\b.{0,50}?(\d+(?:\.\d+)?)/i);
+  const qNearTight=tight.match(/qualidade[a-z]*(\d)(\d{2,3})/i);
+  const q1=flat.match(/\bqualidade\s*(?:fraca|comum|incomum|rara|epica|lendaria|legendaria|mitica|ancia|divina)?\s*(\d+(?:\.\d+)?)/i);
+  const q2=tight.match(/qualidade(?:fraca|comum|incomum|rara|epica|lendaria|legendaria|mitica|ancia|divina)?(\d)(\d{2,3})/i);
+  const q3=flat.match(/\b(?:fraca|comum|incomum|rara|epica|lendaria|legendaria|mitica|ancia|divina)\s*(\d+(?:\.\d+)?)/i);
+  if(qNear&&Number(qNear[1])>0&&Number(qNear[1])<=3)out.quality=Number(qNear[1]);
+  else if(qNearTight)out.quality=Number(qNearTight[1]+'.'+qNearTight[2]);
+  else if(q1)out.quality=Number(q1[1]);
+  else if(q2)out.quality=Number(q2[1]+'.'+q2[2]);
+  else if(q3)out.quality=Number(q3[1]);
+  if(!Number.isFinite(out.quality)||out.quality<=0)out.quality=1;
+
+  out.stats.hp=readNumberAfterLabels(flat,tight,['hp']);
+  out.stats.atk=readNumberAfterLabels(flat,tight,['atk','ataque']);
+  out.stats.def=readNumberAfterLabels(flat,tight,['def','defesa']);
+  out.stats.spAtk=readNumberAfterLabels(flat,tight,['spa','sp atk','spatk','ataq esp','ataque especial']);
+  out.stats.spDef=readNumberAfterLabels(flat,tight,['spd','sp def','spdef','def esp','defesa especial']);
+  out.stats.speed=readNumberAfterLabels(flat,tight,['vel','spe','speed']);
+
+  if(catalog.length)out.pokemon=pokemonFromText(raw);
+  return out;
+}
+function applyParsedTooltip(parsed){
+  if(!parsed)return;
+  if(parsed.pokemon)$('#pokemonInput').value='#'+String(parsed.pokemon.id).padStart(3,'0')+' '+parsed.pokemon.name;
+  if(parsed.level!=null)$('#levelInput').value=parsed.level;
+  if(parsed.quality!=null)$('#qualityInput').value=Number(parsed.quality).toFixed(3);
+  if(parsed.ivTotal!=null)$('#ivTotalInput').value=parsed.ivTotal;
+  const map={hp:'hp',atk:'atk',def:'def',spAtk:'spAtk',spDef:'spDef',speed:'speed'};
+  for(const [key,stat] of Object.entries(map)){
+    const value=parsed.stats?.[key];
+    if(value!=null&&Number.isFinite(Number(value))){
+      const input=document.querySelector('[data-stat="'+stat+'"]');
+      if(input)input.value=value;
+    }
+  }
+}
+function fillFromText(text){
+  lastOcrText=String(text||'');
+  const parsed=parsePiwTooltipText(lastOcrText);
+  applyParsedTooltip(parsed);
+  if(!catalog.length){
+    loadCatalog().then(()=>{
+      const parsedAgain=parsePiwTooltipText(lastOcrText);
+      applyParsedTooltip(parsedAgain);
+    }).catch(()=>{});
+  }
+}
+window.__idleVerseIvParseDebug=function(){
+  const text=($('#ocrText')?.value)||lastOcrText||'';
+  return parsePiwTooltipText(text);
+};
+
+async function loadCatalog(){if(catalog.length)return catalog;if(catalogReady)return catalogReady;catalogReady=(async()=>{const res=await fetch('piw-creatures.json',{cache:'no-store'});catalog=await res.json();$('#pokemonList').innerHTML=catalog.map(p=>'<option value="#'+String(p.id).padStart(3,'0')+' '+p.name+'"></option>').join('');if(lastOcrText)fillFromText(lastOcrText);return catalog})().catch(e=>{catalogReady=null;throw e});return catalogReady}
+async function runOcr(file){const status=$('#ocrStatus');$('#preview').src=URL.createObjectURL(file);$('#preview').style.display='block';status.textContent='Lendo imagem... pode levar alguns segundos.';status.className='status';try{if(!window.Tesseract)throw new Error('OCR ainda não carregou. Tente novamente em alguns segundos.');const {data}=await Tesseract.recognize(file,'por+eng');$('#ocrText').value=data.text||'';fillFromText(data.text||'');status.textContent='Texto lido. Confira os números antes de calcular.';status.className='status ok';}catch(e){status.textContent='Não foi possível ler automaticamente: '+(e.message||e)+'. Preencha manualmente.';status.className='status error'}}
+function init(){const grid=$('#statGrid');grid.innerHTML=KEYS.map(k=>'<div class="stat-input"><label><span style="color:'+COLORS[k]+'">'+LABELS[k]+'</span><small>stat do jogo</small></label><input data-stat="'+k+'" type="number" min="0" placeholder="0"></div>').join('');loadCatalog().catch(e=>{$('#ocrStatus').textContent='Não foi possível carregar o catálogo: '+e.message;$('#ocrStatus').className='status error'});$('#calcBtn').addEventListener('click',calculate);$('#clearBtn').addEventListener('click',()=>{document.querySelectorAll('input').forEach(i=>{if(i.type!=='file')i.value=''});$('#levelInput').value=1;$('#qualityInput').value='1.000';$('#clanInput').value=0;$('#ocrText').value='';$('#preview').style.display='none';$('#result').innerHTML=`<div class="result-empty"><div><span class="eyebrow small">Resultado</span><h2>Cole um print para começar</h2><p>Quando calcular, esta área vira o IV Helper completo com barras, IVs, precisão, golpes e Overall.</p><ol><li>Cole ou envie o print no topo.</li><li>Confira nível, Quality e stats.</li><li>Escolha o Pokémon e clique em calcular.</li></ol></div></div>`});$('#imageInput').addEventListener('change',e=>{const file=e.target.files?.[0];if(file)runOcr(file)});$('#ocrText').addEventListener('change',e=>fillFromText(e.target.value))}
+init();
+</script>
+<script id="iv-helper-paste-script">
+(() => {
+  const zone = document.getElementById('pasteZone');
+  const input = document.getElementById('imageInput');
+  const fileName = document.getElementById('fileName');
+  const status = document.getElementById('ocrStatus');
+  if (!zone || !input || window.__idleVerseIvPasteReady) return;
+  window.__idleVerseIvPasteReady = true;
+  const setFileName = (file) => {
+    if (fileName) fileName.textContent = file ? file.name || 'Imagem colada da área de transferência.' : 'Nenhuma imagem selecionada.';
+  };
+  const processFile = (file, source) => {
+    if (!file || !/^image\//i.test(file.type || '')) {
+      if (status) {
+        status.textContent = 'Cole ou selecione uma imagem válida do print.';
+        status.className = 'status error';
+      }
+      return false;
+    }
+    setFileName(source === 'paste' ? new File([file], file.name || 'print-colado.png', { type: file.type || 'image/png' }) : file);
+    if (typeof runOcr === 'function') runOcr(file);
+    return true;
+  };
+  zone.addEventListener('click', () => input.click());
+  zone.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      input.click();
+    }
+  });
+  input.addEventListener('change', () => setFileName(input.files?.[0] || null));
+  document.addEventListener('paste', (event) => {
+    const items = Array.from(event.clipboardData?.items || []);
+    const imageItem = items.find((item) => /^image\//i.test(item.type || ''));
+    if (!imageItem) return;
+    const file = imageItem.getAsFile();
+    if (processFile(file, 'paste')) {
+      event.preventDefault();
+      zone.classList.add('dragover');
+      setTimeout(() => zone.classList.remove('dragover'), 450);
+    }
+  });
+  zone.addEventListener('dragover', (event) => {
+    event.preventDefault();
+    zone.classList.add('dragover');
+  });
+  zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+  zone.addEventListener('drop', (event) => {
+    event.preventDefault();
+    zone.classList.remove('dragover');
+    processFile(Array.from(event.dataTransfer?.files || []).find((file) => /^image\//i.test(file.type || '')), 'drop');
+  });
+})();
+</script>
+<script id="mobile-nav-script">(()=>{const header=document.querySelector('header');const btn=document.querySelector('.nav-toggle');const links=document.querySelectorAll('.nav-links a');if(!header||!btn)return;const close=()=>{header.classList.remove('nav-open');document.body.classList.remove('nav-open');btn.setAttribute('aria-expanded','false')};btn.addEventListener('click',()=>{const open=!header.classList.contains('nav-open');header.classList.toggle('nav-open',open);document.body.classList.toggle('nav-open',open);btn.setAttribute('aria-expanded',String(open))});links.forEach(a=>a.addEventListener('click',close));document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});document.addEventListener('click',e=>{if(header.classList.contains('nav-open')&&!header.contains(e.target))close()})})();</script>
+<script>(()=>{const block=(event)=>{event.preventDefault();event.stopPropagation();return false};document.addEventListener('contextmenu',block,{capture:true});document.addEventListener('keydown',(event)=>{const key=String(event.key||'').toLowerCase();if(key==='f12'||(event.ctrlKey&&key==='u')||(event.ctrlKey&&event.shiftKey&&['i','j','c'].includes(key)))block(event)},{capture:true})})();</script>
+</body>
+</html>

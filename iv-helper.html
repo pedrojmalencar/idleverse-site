@@ -232,13 +232,14 @@ function pokemonFromText(text){
 function pokemonByInput(){const value=$('#pokemonInput').value;const q=norm(value).replace(/^#?\d+\s*/,'').trim();const id=Number(String(value).match(/#?(\d+)/)?.[1]);return catalog.find(p=>p.id===id)||catalog.find(p=>norm(p.name)===q)||catalog.find(p=>norm(p.name).includes(q))||pokemonFromText(lastOcrText||$('#ocrText')?.value||'')}
 function readStats(){return Object.fromEntries(KEYS.map(k=>[k,Number(document.querySelector('[data-stat="'+k+'"]').value)||0]))}
 function bestMoves(p){
-  // O catalogo tem golpes de altissimo poder (200-600, provavelmente
-  // exclusivos de evolucao/nivel maximo) cadastrados por erro com
-  // learnLevel:1. Isso fazia esses golpes sempre aparecerem como "principais"
-  // mesmo pra Pokemon recem-capturados. Nenhum golpe legitimo de learnLevel 1
-  // passa de 120 de poder no catalogo, entao acima de 200 no nivel 1 e sinal
-  // seguro de dado incorreto - filtramos ate a fonte ser corrigida.
-  return (p.moves||[]).filter(m=>!(m.learnLevel<=1&&m.power>=200)).slice().sort((a,b)=>b.power-a.power).slice(0,8)
+  // O catalogo tem golpes de poder 300/600 cadastrados por erro com
+  // learnLevel:1 (Cyclonic Tide, Massive Hurricane, Crumbling Rain, etc.) -
+  // sao o MESMO nome copiado em dezenas de especies diferentes, um padrao
+  // claro de golpe "definitivo" por tipo que vazou pro nivel 1 por engano.
+  // Ja golpes de 200 de poder no nivel 1 (Thunder Wrath do Electabuzz, Inferno
+  // do Ninetales, etc.) sao unicos por especie - golpe de assinatura legitimo,
+  // nao filtrar. Corte em 300 e o que separa esses dois grupos com seguranca.
+  return (p.moves||[]).filter(m=>!(m.learnLevel<=1&&m.power>=300)).slice().sort((a,b)=>b.power-a.power).slice(0,8)
 }
 function roleFromMoves(p){const moves=bestMoves(p);const phys=moves.filter(m=>/PHYSICAL|FISICO|FÍSICO/.test(m.category)).reduce((s,m)=>s+m.power,0);const spec=moves.filter(m=>/SPECIAL|ESPECIAL/.test(m.category)).reduce((s,m)=>s+m.power,0);const bulkMain=p.base.def>=p.base.spDef?'def':'spDef';if(phys>spec*1.25)return{label:'Atacante físico',main:'atk',secondary:bulkMain,important:['atk',bulkMain,'hp'],speedWeight:.04};if(spec>phys*1.25)return{label:'Atacante especial',main:'spAtk',secondary:bulkMain,important:['spAtk',bulkMain,'hp'],speedWeight:.04};if((p.base.def+p.base.spDef+p.base.hp)>(p.base.atk+p.base.spAtk+p.base.speed)*1.08)return{label:'Tanque',main:bulkMain,secondary:'hp',important:[bulkMain,'hp',bulkMain==='def'?'spDef':'def'],speedWeight:.02};return{label:'Misto',main:'atk',secondary:'spAtk',important:['atk','spAtk','hp'],speedWeight:.03}}
 function statIvAvg(map,k){const a=map[k]||[];return a.length?(a[0]+a.at(-1))/2:16}function overallScore(p,q,map,confirmed){const role=roleFromMoves(p);const ivAvg=KEYS.reduce((s,k)=>s+statIvAvg(map,k),0)/6;const ivScore=ivAvg/32*28;const rarityScore=Math.min(1,q/2.6)*24;const useful=role.important||[role.main,role.secondary,'hp'];const usefulScore=((statIvAvg(map,useful[0])/32)*.48+(statIvAvg(map,useful[1])/32)*.32+(statIvAvg(map,useful[2])/32)*.20)*24;const speedScore=(statIvAvg(map,'speed')/32)*(role.speedWeight||.03)*10;const bulkAvg=(['hp','def','spDef'].reduce((s,k)=>s+statIvAvg(map,k),0)/3)/32;const moveTypes=new Set(bestMoves(p).filter(m=>m.power>0).map(m=>m.type));const power=Math.min(1,bestMoves(p).reduce((s,m)=>s+m.power,0)/720);const kitScore=(Math.min(1,moveTypes.size/4)*.35+power*.65)*16;const confidence=.72+confirmed/6*.28;return Math.max(1,Math.min(100,Math.round((ivScore+rarityScore+usefulScore+bulkAvg*7+kitScore+speedScore)*confidence)))}

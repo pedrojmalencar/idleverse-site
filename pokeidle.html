@@ -22,6 +22,35 @@
   <meta name="twitter:description" content="Ferramentas do Idle Verse para PokeIdle World: IV Helper, Hunt Log, Central PvP, mercado, rotas de up e organização de telas." />
   <meta name="twitter:image" content="https://idleverse.com.br/assets/og-image.png" />
 
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "O Idle Verse funciona com o Poke Idle World?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Sim. O módulo PokeIdle foi feito especificamente para o Poke Idle World (poke.idleworld.online): IV Helper, Hunt Log, Central PvP, análise de mercado e Rotas de Up aparecem direto no fluxo do jogo." }
+      },
+      {
+        "@type": "Question",
+        "name": "Preciso reinstalar o Idle Verse para atualizar as ferramentas do PokeIdle?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Não. O app se atualiza sozinho: ele verifica se há uma versão nova ao abrir e instala automaticamente no próximo fechamento, sem você precisar baixar nada de novo." }
+      },
+      {
+        "@type": "Question",
+        "name": "As ferramentas do PokeIdle funcionam em quantas contas ao mesmo tempo?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Em todas as telas de PokeIdle abertas ao mesmo tempo, até 4 por menu. Cada tela tem sessão própria, então IV Helper, Hunt Log e os demais recursos funcionam de forma independente em cada conta." }
+      },
+      {
+        "@type": "Question",
+        "name": "Usar o IV Helper ou o Hunt Log é considerado bot?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Não. As ferramentas do módulo PokeIdle só organizam e exibem informações na tela — nada é clicado, farmado ou automatizado. Quem joga, captura e decide continua sendo você." }
+      }
+    ]
+  }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet" />
@@ -615,6 +644,42 @@
       color: var(--green);
     }
 
+    .faq { max-width: 760px; margin: 0 auto; }
+    .faq details {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    .faq summary {
+      padding: 18px 22px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary::after {
+      content: "+";
+      color: var(--gold);
+      font-size: 22px;
+      font-weight: 400;
+      flex: 0 0 auto;
+      transition: transform 0.2s;
+    }
+    .faq details[open] summary::after { transform: rotate(45deg); }
+    .faq details p {
+      padding: 0 22px 18px;
+      font-size: 15px;
+      color: var(--muted);
+    }
+
     .plans-cta {
       margin-top: 34px;
       padding: 30px;
@@ -1027,6 +1092,28 @@
         <div class="rules-note">
           <strong>Importante:</strong> o Idle Verse não é bot, não automatiza ações e não incentiva burlar regras.
           O foco é organização visual, leitura de informações e ferramentas de apoio para o jogador decidir melhor.
+        </div>
+
+        <div class="section-head" style="margin-top: 60px;">
+          <h2>Dúvidas sobre o módulo <em>PokeIdle</em></h2>
+        </div>
+        <div class="faq">
+          <details>
+            <summary>O Idle Verse funciona com o Poke Idle World?</summary>
+            <p>Sim. O módulo PokeIdle foi feito especificamente para o Poke Idle World (poke.idleworld.online): IV Helper, Hunt Log, Central PvP, análise de mercado e Rotas de Up aparecem direto no fluxo do jogo.</p>
+          </details>
+          <details>
+            <summary>Preciso reinstalar o Idle Verse para atualizar as ferramentas do PokeIdle?</summary>
+            <p>Não. O app se atualiza sozinho: ele verifica se há uma versão nova ao abrir e instala automaticamente no próximo fechamento, sem você precisar baixar nada de novo.</p>
+          </details>
+          <details>
+            <summary>As ferramentas do PokeIdle funcionam em quantas contas ao mesmo tempo?</summary>
+            <p>Em todas as telas de PokeIdle abertas ao mesmo tempo — até 4 por menu. Cada tela tem sessão própria, então IV Helper, Hunt Log e os demais recursos funcionam de forma independente em cada conta.</p>
+          </details>
+          <details>
+            <summary>Usar o IV Helper ou o Hunt Log é considerado bot?</summary>
+            <p>Não. As ferramentas do módulo PokeIdle só organizam e exibem informações na tela — nada é clicado, farmado ou automatizado. Quem joga, captura e decide continua sendo você.</p>
+          </details>
         </div>
 
         <div class="plans-cta">

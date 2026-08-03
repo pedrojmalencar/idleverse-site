@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Módulo PokeIdle | Idle Verse</title>
-  <meta name="description" content="Ferramentas do Idle Verse para PokeIdle World: IV Helper, Hunt Log, Central PvP, mercado, rotas de up e organização de telas." />
+  <meta name="description" content="Ferramentas do Idle Verse para PokeIdle World: IV Helper, Metas Pessoais, Central PvP, mercado, rotas de up e organização de telas." />
   <link rel="canonical" href="https://idleverse.com.br/pokeidle.html" />
 
   <link rel="icon" type="image/png" href="assets/favicon.png" />
@@ -15,11 +15,11 @@
   <meta property="og:locale" content="pt_BR" />
   <meta property="og:url" content="https://idleverse.com.br/pokeidle.html" />
   <meta property="og:title" content="Módulo PokeIdle | Idle Verse" />
-  <meta property="og:description" content="Ferramentas do Idle Verse para PokeIdle World: IV Helper, Hunt Log, Central PvP, mercado, rotas de up e organização de telas." />
+  <meta property="og:description" content="Ferramentas do Idle Verse para PokeIdle World: IV Helper, Metas Pessoais, Central PvP, mercado, rotas de up e organização de telas." />
   <meta property="og:image" content="https://idleverse.com.br/assets/og-image.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Módulo PokeIdle | Idle Verse" />
-  <meta name="twitter:description" content="Ferramentas do Idle Verse para PokeIdle World: IV Helper, Hunt Log, Central PvP, mercado, rotas de up e organização de telas." />
+  <meta name="twitter:description" content="Ferramentas do Idle Verse para PokeIdle World: IV Helper, Metas Pessoais, Central PvP, mercado, rotas de up e organização de telas." />
   <meta name="twitter:image" content="https://idleverse.com.br/assets/og-image.png" />
 
   <script type="application/ld+json">
@@ -30,7 +30,7 @@
       {
         "@type": "Question",
         "name": "O Idle Verse funciona com o Poke Idle World?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Sim. O módulo PokeIdle foi feito especificamente para o Poke Idle World (poke.idleworld.online): IV Helper, Hunt Log, Central PvP, análise de mercado e Rotas de Up aparecem direto no fluxo do jogo." }
+        "acceptedAnswer": { "@type": "Answer", "text": "Sim. O módulo PokeIdle foi feito especificamente para o Poke Idle World (poke.idleworld.online): IV Helper, Metas Pessoais, Central PvP, análise de mercado e Rotas de Up aparecem direto no fluxo do jogo." }
       },
       {
         "@type": "Question",
@@ -40,11 +40,11 @@
       {
         "@type": "Question",
         "name": "As ferramentas do PokeIdle funcionam em quantas contas ao mesmo tempo?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Em todas as telas de PokeIdle abertas ao mesmo tempo, até 4 por menu. Cada tela tem sessão própria, então IV Helper, Hunt Log e os demais recursos funcionam de forma independente em cada conta." }
+        "acceptedAnswer": { "@type": "Answer", "text": "Em até 4 contas de PokeIdle ao mesmo tempo, seguindo a regra do próprio jogo. Cada tela tem sessão própria, então IV Helper, Metas Pessoais e os demais recursos funcionam de forma independente em cada conta." }
       },
       {
         "@type": "Question",
-        "name": "Usar o IV Helper ou o Hunt Log é considerado bot?",
+        "name": "Usar as ferramentas do módulo PokeIdle é considerado bot?",
         "acceptedAnswer": { "@type": "Answer", "text": "Não. As ferramentas do módulo PokeIdle só organizam e exibem informações na tela — nada é clicado, farmado ou automatizado. Quem joga, captura e decide continua sendo você." }
       }
     ]
@@ -232,7 +232,7 @@
     .hero {
       position: relative;
       overflow: hidden;
-      padding: 38px 0 56px;
+      padding: 18px 0 56px;
     }
 
     .hero::before {
@@ -250,7 +250,11 @@
       display: grid;
       grid-template-columns: minmax(0, .88fr) minmax(420px, 1.12fr);
       gap: 34px;
-      align-items: center;
+      align-items: start;
+    }
+
+    .hero-media {
+      margin-top: 6px;
     }
 
     .hero-copy {
@@ -580,6 +584,11 @@
       background: rgba(255,203,69,.12);
     }
 
+    .tag.warn {
+      color: var(--red);
+      background: rgba(255,107,107,.12);
+    }
+
     .feature h3 {
       color: #fff;
       font-size: clamp(24px, 3vw, 34px);
@@ -629,6 +638,52 @@
       max-width: 420px;
       margin-top: 10px;
       color: var(--muted);
+    }
+
+    .video-box:has(.video-extra) video {
+      border-radius: 18px 18px 0 0;
+    }
+
+    .video-extra {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 16px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+    }
+
+    .video-extra a {
+      flex: 0 0 auto;
+      display: block;
+      line-height: 0;
+    }
+
+    .video-extra img {
+      width: 170px;
+      height: auto;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.16);
+      box-shadow: 0 10px 26px rgba(0,0,0,.35);
+      transition: transform .16s ease;
+    }
+
+    .video-extra a:hover img {
+      transform: scale(1.03);
+    }
+
+    .video-extra span {
+      align-self: center;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .video-extra span b {
+      display: block;
+      color: #dce8f8;
+      font-size: 13px;
+      margin-bottom: 3px;
     }
 
     .rules-note {
@@ -824,6 +879,16 @@
         border-radius: 14px;
       }
 
+      .video-extra {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .video-extra img {
+        width: 190px;
+      }
+
       .floating-card {
         position: static;
         margin-top: 10px;
@@ -892,7 +957,7 @@
           <span class="eyebrow">Página especial para PokeIdle World</span>
           <h1><em>Domine sua hunt</em> sem sair do jogo.</h1>
           <p class="lead">
-            O módulo PokeIdle coloca IV, golpes, capturas, mercado, PvP, Hunt Log e Rotas de Up no seu campo de visão.
+            O módulo PokeIdle coloca IV, golpes, capturas, mercado, PvP, Metas Pessoais e Rotas de Up no seu campo de visão.
             É feito para jogar com mais informação, sem bot e sem automação.
           </p>
           <p class="safe-note">Ferramentas visuais e organização de tela para você decidir melhor, dentro das regras do jogo.</p>
@@ -904,7 +969,7 @@
             <span><b>4</b> telas no máximo para PokeIdle</span>
             <span><b>IV</b> Helper dentro do jogo</span>
             <span><b>⚔</b> Central PvP e bosses</span>
-            <span><b>VIP</b> Rotas de Up e Hunt Log</span>
+            <span><b>VIP</b> Rotas de Up e Metas Pessoais</span>
           </div>
         </div>
 
@@ -915,7 +980,7 @@
               <span>PokeIdle World no Idle Verse</span>
             </div>
             <div class="video-frame">
-              <video src="video1.mp4" autoplay muted loop playsinline preload="metadata"></video>
+              <video src="principal.mp4" autoplay muted loop playsinline preload="metadata"></video>
             </div>
             <div class="floating-card float-iv">
               <span>🧬</span>
@@ -923,7 +988,7 @@
             </div>
             <div class="floating-card float-hunt">
               <span>🎯</span>
-              <span><strong>Hunt Log</strong>Itens importantes na tela</span>
+              <span><strong>Metas Pessoais</strong>Objetivos por conta, em tempo real</span>
             </div>
             <img class="pokemon-sprite sprite-gengar" alt="" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/94.gif" />
             <img class="pokemon-sprite sprite-dragonite" alt="" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/149.gif" />
@@ -941,9 +1006,9 @@
           <p>Veja IV, atributos, raridade, golpes, poder e overall sem abrir várias abas.</p>
         </article>
         <article class="quick-card">
-          <div class="icon">🎒</div>
-          <h3>Hunt Log</h3>
-          <p>Acompanhe Pokeballs, potions, pheromone, rare picture e boss token durante a hunt.</p>
+          <div class="icon">🎯</div>
+          <h3>Metas Pessoais</h3>
+          <p>Crie metas de IV, Quality ou capturar shiny e veja em qual conta seu Pokémon bateu a meta.</p>
         </article>
         <article class="quick-card">
           <div class="icon">⚔️</div>
@@ -1011,9 +1076,10 @@
                 <span class="tag basic">Plano Básico</span>
                 <span class="tag">Mercado</span>
                 <span class="tag">IV Helper</span>
+                <span class="tag warn">🎥 Vídeo será regravado</span>
               </div>
               <h3>Stats e IV no mercado</h3>
-              <p>Ao analisar anúncios de Pokémon no mercado, o Idle Verse mostra informações úteis no IV Helper para avaliar melhor uma possível compra.</p>
+              <p>Ao analisar anúncios de Pokémon no mercado, o Idle Verse mostra informações úteis no IV Helper para avaliar melhor uma possível compra. O painel ganhou botões novos (Card e Criar Anúncio), então o vídeo abaixo está desatualizado.</p>
               <ul>
                 <li>Compare qualidade, nível, poder e potencial antes de gastar dinheiro do jogo.</li>
                 <li>Evite abrir várias telas só para entender se o Pokémon vale a pena.</li>
@@ -1022,6 +1088,29 @@
             </div>
             <div class="video-box">
               <video src="statsmarket.mp4" controls muted preload="metadata" playsinline></video>
+            </div>
+          </article>
+
+          <article class="feature">
+            <div class="feature-copy">
+              <div class="tag-row">
+                <span class="tag basic">Plano Básico</span>
+                <span class="tag">IV Helper</span>
+              </div>
+              <h3>Card do Pokémon com um clique</h3>
+              <p>No IV Helper, o botão "📋 Card" copia uma imagem pronta com os dados do Pokémon fixado — é só colar (Ctrl+V) onde quiser: chat, Discord, anúncio.</p>
+              <ul>
+                <li>Card gerado na hora, direto do jogo, sem precisar printar a tela.</li>
+                <li>Mostra IV, Quality, golpes e overall organizados.</li>
+                <li>Ótimo para mostrar uma captura boa sem vazar o resto da tela.</li>
+              </ul>
+            </div>
+            <div class="video-box">
+              <video src="card.mp4" controls muted preload="metadata" playsinline></video>
+              <div class="video-extra">
+                <a href="cardimage.png" target="_blank" rel="noopener" title="Ver imagem em tamanho real"><img src="cardimage.png" alt="Exemplo de card gerado pelo IV Helper" /></a>
+                <span><b>Exemplo do card gerado</b>É essa imagem que vai pra área de transferência ao clicar em "📋 Card". Clique na imagem para ver em tamanho real.</span>
+              </div>
             </div>
           </article>
 
@@ -1041,7 +1130,7 @@
               </ul>
             </div>
             <div class="video-box">
-              <video src="calculadoracompare.mp4" controls muted preload="metadata" playsinline></video>
+              <video src="comparacaopokemon.mp4" controls muted preload="metadata" playsinline></video>
             </div>
           </article>
 
@@ -1073,17 +1162,54 @@
               <h3>Rotas de Up por Pokémon</h3>
               <p>O módulo de Rotas de Up recomenda alvos de hunt de acordo com o Pokémon escolhido, nível atual, qualidade, função e vantagem de tipo.</p>
               <ul>
-                <li>Sugestões por faixas de nível: 1-10, 10-20, 20-30, 30-50, 50-80, 80-100 e 100-150.</li>
+                <li>Sugestões por faixas de nível: 1-10, 10-20, 20-30, 30-50, 50-80, 80-100, 100-150 e 150+ (Outland).</li>
                 <li>Considera tipos, força relativa, ritmo de abate e segurança.</li>
                 <li>Recurso VIP para acelerar o planejamento de evolução.</li>
               </ul>
             </div>
             <div class="video-box">
-              <div class="video-placeholder">
-                <div>
-                  <b>Vídeo em breve</b>
-                  <small>Quando gravar, salve nesta pasta com o nome: <strong>rotasdeup.mp4</strong></small>
-                </div>
+              <video src="rotasdeup.mp4" controls muted preload="metadata" playsinline></video>
+            </div>
+          </article>
+
+          <article class="feature">
+            <div class="feature-copy">
+              <div class="tag-row">
+                <span class="tag vip">VIP exclusivo</span>
+                <span class="tag">Metas Pessoais</span>
+              </div>
+              <h3>Metas Pessoais para cada objetivo</h3>
+              <p>Crie metas por espécie (IV mínimo, Quality mínima ou os dois juntos) ou uma meta de "capturar um shiny, qualquer espécie", e acompanhe o progresso direto na tela, sem precisar abrir o depot toda hora.</p>
+              <ul>
+                <li>Metas globais somam o progresso das até 4 contas abertas ao mesmo tempo.</li>
+                <li>Mostra em qual conta está o Pokémon que bateu a meta.</li>
+                <li>Meta de shiny só conta capturas novas — o que já estava no depot ao criar a meta não conta.</li>
+              </ul>
+            </div>
+            <div class="video-box">
+              <video src="metas.mp4" controls muted preload="metadata" playsinline></video>
+            </div>
+          </article>
+
+          <article class="feature">
+            <div class="feature-copy">
+              <div class="tag-row">
+                <span class="tag vip">VIP exclusivo</span>
+                <span class="tag">Mercado</span>
+              </div>
+              <h3>Criar Anúncio com até 6 Pokémon</h3>
+              <p>Monte a imagem do seu anúncio de venda direto no Idle Verse: adicione até 6 Pokémon pelo IV Helper e gere uma única imagem pronta para postar no mercado.</p>
+              <ul>
+                <li>Adicione Pokémon ao anúncio com um clique no IV Helper.</li>
+                <li>Gera uma imagem única com stats e IV de cada um.</li>
+                <li>Economiza tempo comparado a printar e editar anúncio na mão.</li>
+              </ul>
+            </div>
+            <div class="video-box">
+              <video src="criaranuncio.mp4" controls muted preload="metadata" playsinline></video>
+              <div class="video-extra">
+                <a href="criaranuncio.png" target="_blank" rel="noopener" title="Ver imagem em tamanho real"><img src="criaranuncio.png" alt="Exemplo de anúncio gerado com até 6 Pokémon" /></a>
+                <span><b>Exemplo do anúncio gerado</b>Pronto pra colar (Ctrl+V) direto no mercado. Clique na imagem para ver em tamanho real.</span>
               </div>
             </div>
           </article>
@@ -1100,7 +1226,7 @@
         <div class="faq">
           <details>
             <summary>O Idle Verse funciona com o Poke Idle World?</summary>
-            <p>Sim. O módulo PokeIdle foi feito especificamente para o Poke Idle World (poke.idleworld.online): IV Helper, Hunt Log, Central PvP, análise de mercado e Rotas de Up aparecem direto no fluxo do jogo.</p>
+            <p>Sim. O módulo PokeIdle foi feito especificamente para o Poke Idle World (poke.idleworld.online): IV Helper, Metas Pessoais, Central PvP, análise de mercado e Rotas de Up aparecem direto no fluxo do jogo.</p>
           </details>
           <details>
             <summary>Preciso reinstalar o Idle Verse para atualizar as ferramentas do PokeIdle?</summary>
@@ -1108,17 +1234,17 @@
           </details>
           <details>
             <summary>As ferramentas do PokeIdle funcionam em quantas contas ao mesmo tempo?</summary>
-            <p>Em todas as telas de PokeIdle abertas ao mesmo tempo — até 4 por menu. Cada tela tem sessão própria, então IV Helper, Hunt Log e os demais recursos funcionam de forma independente em cada conta.</p>
+            <p>Em até 4 contas de PokeIdle ao mesmo tempo, seguindo a regra do próprio jogo — o Idle Verse bloqueia a quinta conta. Cada tela tem sessão própria, então IV Helper, Metas Pessoais e os demais recursos funcionam de forma independente em cada conta.</p>
           </details>
           <details>
-            <summary>Usar o IV Helper ou o Hunt Log é considerado bot?</summary>
+            <summary>Usar as ferramentas do módulo PokeIdle é considerado bot?</summary>
             <p>Não. As ferramentas do módulo PokeIdle só organizam e exibem informações na tela — nada é clicado, farmado ou automatizado. Quem joga, captura e decide continua sendo você.</p>
           </details>
         </div>
 
         <div class="plans-cta">
           <h2>Quer jogar com o módulo completo?</h2>
-          <p>O Básico já entrega ferramentas importantes para PokeIdle. O VIP libera recursos avançados como Rotas de Up e Hunt Log para acompanhar sua hunt com muito mais controle.</p>
+          <p>O Básico já entrega ferramentas importantes para PokeIdle. O VIP libera recursos avançados como Rotas de Up, Metas Pessoais e Criar Anúncio para acompanhar sua hunt com muito mais controle.</p>
           <div class="cta-buttons">
             <a class="btn btn-primary" data-buy="vip" href="#">Assinar VIP</a>
             <a class="btn btn-ghost" data-buy="basico" href="#">Começar pelo Básico</a>

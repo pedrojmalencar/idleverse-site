@@ -273,23 +273,30 @@ const CARD_STAT_LABELS=[['hp',['hp']],['atk',['atk']],['def',['def']],['spAtk',[
 function parseIdleVerseCard(text){
   const flat=norm(String(text||'').replace(/,/g,'.')).replace(/[^a-z0-9.\/%]+/g,' ').replace(/\s+/g,' ').trim();
   const out={pokemon:null,level:null,quality:null,ivTotal:null,stats:{},ivs:{}};
-  // O card e uma GRADE 2x3, e o OCR le linha a linha atravessando as duas
+  // O card e uma GRADE 2x3 e o OCR le linha a linha atravessando as duas
   // colunas: "HP 24 IV   Atk 27 IV" numa linha e "815 / 909   980 / 1032" na
-  // seguinte. Ou seja, o par de numeros NAO vem colado no seu rotulo - por
-  // isso casar "rotulo depois numeros" pegava os numeros do vizinho.
-  // Aqui coletamos rotulos e pares separadamente, cada um na ordem de leitura,
-  // e casamos por posicao. Isso funciona tanto na grade 2x3 quanto numa lista
-  // de uma coluna so.
-  const rotulos=[...flat.matchAll(/\b(hp|atk|def|spa|spd|spe)\b[^a-z0-9]{0,4}(\d{1,2})\s*iv\b/g)];
-  if(rotulos.length<2)return null;
+  // seguinte - o par de numeros NAO vem colado no seu rotulo.
+  //
+  // Alem disso o Tesseract destroi o "✓ 24 IV": na pratica sai "Vv 241V",
+  // "v 27T1IV", "v23IV" - o check vira v/Vv e o numero COLA no "IV" com o I
+  // lido como 1. Por isso nao exigimos o marcador "IV" em lugar nenhum:
+  // localizamos so o rotulo e, logo depois, o primeiro numero de ate 2
+  // digitos (o IV). Os atributos vem do casamento por POSICAO entre a lista
+  // de rotulos e a lista de pares "atual / teto", ambas na ordem de leitura -
+  // o que funciona na grade 2x3 e tambem numa coluna so.
+  const rotulos=[...flat.matchAll(/\b(hp|atk|def|spa|spd|spe)\b/g)];
   // Pares "atributo / teto" DEPOIS do primeiro rotulo: assim a data do
   // cabecalho (04/08/2026) e o "158/192" do IV total ficam de fora.
-  const pares=[...flat.matchAll(/(\d{2,6})(?:\s*[\/l|]\s*|\s+)(\d{2,6})/g)].filter(m=>m.index>rotulos[0].index);
+  const pares=rotulos.length?[...flat.matchAll(/(\d{2,6})(?:\s*[\/l|]\s*|\s+)(\d{2,6})/g)].filter(m=>m.index>rotulos[0].index):[];
+  // Auto-validacao: 3+ rotulos E 3+ pares "atual/teto" so acontece no nosso
+  // card. Nao dependemos da marca d'agua, que o OCR erra com facilidade.
+  if(rotulos.length<3||pares.length<3)return null;
   const CHAVE={hp:'hp',atk:'atk',def:'def',spa:'spAtk',spd:'spDef',spe:'speed'};
   rotulos.forEach((m,i)=>{
     const key=CHAVE[m[1]];
-    out.ivs[key]=Number(m[2]);
     if(pares[i])out.stats[key]=Number(pares[i][1]);
+    const depois=flat.slice(m.index+m[1].length,m.index+m[1].length+12).match(/\d{1,2}/);
+    if(depois){const v=Number(depois[0]);if(v>=1&&v<=32)out.ivs[key]=v}
   });
   const blocos=rotulos.length;
   const lv=flat.match(/\bnivel\s*(\d{1,4})\b/)||flat.match(/\b(?:lv|nv)\s*\.?\s*(\d{1,4})\b/);

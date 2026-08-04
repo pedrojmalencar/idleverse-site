@@ -242,10 +242,70 @@ function bestMoves(p){
   return (p.moves||[]).filter(m=>!(m.learnLevel<=1&&m.power>=300)).slice().sort((a,b)=>b.power-a.power).slice(0,8)
 }
 function roleFromMoves(p){const moves=bestMoves(p);const phys=moves.filter(m=>/PHYSICAL|FISICO|FÍSICO/.test(m.category)).reduce((s,m)=>s+m.power,0);const spec=moves.filter(m=>/SPECIAL|ESPECIAL/.test(m.category)).reduce((s,m)=>s+m.power,0);const bulkMain=p.base.def>=p.base.spDef?'def':'spDef';if(phys>spec*1.25)return{label:'Atacante físico',main:'atk',secondary:bulkMain,important:['atk',bulkMain,'hp'],speedWeight:.04};if(spec>phys*1.25)return{label:'Atacante especial',main:'spAtk',secondary:bulkMain,important:['spAtk',bulkMain,'hp'],speedWeight:.04};if((p.base.def+p.base.spDef+p.base.hp)>(p.base.atk+p.base.spAtk+p.base.speed)*1.08)return{label:'Tanque',main:bulkMain,secondary:'hp',important:[bulkMain,'hp',bulkMain==='def'?'spDef':'def'],speedWeight:.02};return{label:'Misto',main:'atk',secondary:'spAtk',important:['atk','spAtk','hp'],speedWeight:.03}}
-function statIvAvg(map,k){const a=map[k]||[];return a.length?(a[0]+a.at(-1))/2:16}function overallScore(p,q,map,confirmed){const role=roleFromMoves(p);const ivAvg=KEYS.reduce((s,k)=>s+statIvAvg(map,k),0)/6;const ivScore=ivAvg/32*28;const rarityScore=Math.min(1,q/2.6)*24;const useful=role.important||[role.main,role.secondary,'hp'];const usefulScore=((statIvAvg(map,useful[0])/32)*.48+(statIvAvg(map,useful[1])/32)*.32+(statIvAvg(map,useful[2])/32)*.20)*24;const speedScore=(statIvAvg(map,'speed')/32)*(role.speedWeight||.03)*10;const bulkAvg=(['hp','def','spDef'].reduce((s,k)=>s+statIvAvg(map,k),0)/3)/32;const moveTypes=new Set(bestMoves(p).filter(m=>m.power>0).map(m=>m.type));const power=Math.min(1,bestMoves(p).reduce((s,m)=>s+m.power,0)/720);const kitScore=(Math.min(1,moveTypes.size/4)*.35+power*.65)*16;const confidence=.72+confirmed/6*.28;return Math.max(1,Math.min(100,Math.round((ivScore+rarityScore+usefulScore+bulkAvg*7+kitScore+speedScore)*confidence)))}
+function statIvAvg(map,k){const a=map[k]||[];return a.length?(a[0]+a.at(-1))/2:16}
+// Overall PORTADO DO APP (calculator.js: pokemonMoveProfile /
+// pokemonOverallWeights / pokemonOverallScore). O site tinha uma formula
+// propria e diferente, entao o MESMO Pokemon dava 74% aqui e 79% no app -
+// numeros divergentes pro jogador sem explicacao. O app e a referencia, e
+// esta e uma copia fiel dele. Se um dia mudar la, mude aqui igual.
+function pokemonMoveProfile(sp){
+  // Overall mede o potencial estrutural do Pokemon, nao a forca no nivel
+  // atual - por isso considera o kit ofensivo completo (inclusive TM).
+  const learned=(sp?.moves||[]).filter(m=>Number(m.power)>0);
+  const typeSet=new Set([sp?.type1,sp?.type2].filter(Boolean).map(x=>String(x).toUpperCase()));
+  let physical=0,special=0,best=0,stabCount=0;
+  for(const m of learned){
+    const power=Number(m.power)||0;
+    const stab=typeSet.has(String(m.type||'').toUpperCase())?1.18:1;
+    const score=power*stab;
+    if(stab>1)stabCount++;
+    if(m.category==='PHYSICAL')physical+=score;else if(m.category==='SPECIAL')special+=score;
+    best=Math.max(best,score);
+  }
+  const total=physical+special;
+  const role=total<=0?'balanced':physical>=special*1.35?'physical':special>=physical*1.35?'special':'mixed';
+  return {learned,physical,special,best,stabCount,role};
+}
+function pokemonOverallWeights(profile){
+  const w={hp:.12,atk:.19,def:.13,spAtk:.19,spDef:.13,speed:.12};
+  if(profile?.role==='physical'){w.atk=.32;w.spAtk=.06}
+  else if(profile?.role==='special'){w.spAtk=.32;w.atk=.06}
+  const total=KEYS.reduce((s,k)=>s+w[k],0)||1;
+  KEYS.forEach(k=>{w[k]/=total});
+  return w;
+}
+function overallScore(p,q,map,confirmed,stats,level,clan,ivTotal){
+  const profile=pokemonMoveProfile(p);
+  const weights=pokemonOverallWeights(profile);
+  const qualityScore=Math.max(0,Math.min(1,Number(q)/2.6));
+  const ivFallback=Number(ivTotal)>0?Math.max(0,Math.min(1,Number(ivTotal)/192)):.5;
+  let ivUseful=0,statUseful=0,statWeight=0;
+  for(const key of KEYS){
+    const c=map[key]||[];
+    const growth=c.length?(c[0]+c[c.length-1])/2:null;
+    const ivScore=growth!=null?Math.max(0,Math.min(1,growth/32)):ivFallback;
+    ivUseful+=ivScore*weights[key];
+    const observed=Number(stats?.[key])||0;
+    const expected=expectedRange(p.base[key],level||1,q,key,clan||0);
+    if(observed>0&&expected.max>0){statUseful+=Math.max(0,Math.min(1,observed/expected.max))*weights[key];statWeight+=weights[key]}
+  }
+  const statScore=statWeight>0?statUseful/statWeight:ivUseful;
+  const bestMoveScore=Math.max(profile.best,profile.role==='mixed'?Math.min(profile.physical,profile.special)/2:0);
+  const movePowerScore=Math.max(0,Math.min(1,bestMoveScore/236));
+  const coverageScore=Math.min(1,profile.learned.length/8)*.35+Math.min(1,profile.stabCount/3)*.25;
+  const moveScore=Math.max(0,Math.min(1,movePowerScore*.75+coverageScore));
+  const score=qualityScore*.35+ivUseful*.30+statScore*.20+moveScore*.15;
+  return Math.round(Math.max(0,Math.min(1,score))*100);
+}
+// Poder: mesma conta do app (soma dos atributos x quality). Conferido com o
+// card do Tyranitar - 6918 x 1.720 = 11899, igual ao que o app mostra.
+function pokemonPower(stats,q){
+  const soma=KEYS.reduce((s,k)=>s+(Number(stats?.[k])||0),0);
+  return soma>0&&q>0?Math.round(soma*q):0;
+}
 function calculate(){if(!catalog.length){renderError('Catálogo ainda carregando. Tente novamente em alguns segundos.');loadCatalog().catch(()=>{});return}const p=pokemonByInput();if(!p){renderError('Pokémon não encontrado no catálogo. Confira o nome lido pelo OCR ou digite manualmente.');return}const level=Math.max(1,Math.min(9999,Number($('#levelInput').value)||1));const q=Number($('#qualityInput').value)||1;const clan=Number($('#clanInput').value)||0;const total=Number($('#ivTotalInput').value)||0;let map=Object.fromEntries(KEYS.map(k=>[k,possibleGrowth(p.base[k],readStats()[k],level,q,k,clan)]));map=refineByTotal(map,total);renderResult(p,level,q,clan,total,map)}
 function renderError(msg){$('#result').innerHTML='<div class="result-empty error"><div><h2>Não foi possível calcular</h2><p>'+msg+'</p></div></div>'}
-function renderResult(p,level,q,clan,total,map){const stats=readStats();let confirmed=0,sumMin=0,sumMax=0;const rows=KEYS.map(k=>{const c=map[k]||[];const lo=c[0],hi=c.at(-1);if(c.length===1)confirmed++;if(c.length){sumMin+=lo;sumMax+=hi}const range=expectedRange(p.base[k],level,q,k,clan);const pct=c.length?((lo+hi)/2)/32*100:Math.min(100,(stats[k]||0)/(range.max||1)*100);const finalIv=c.length?(lo===hi?lo:Math.round((lo+hi)/2)):null;const label=c.length?'✓ '+finalIv:(stats[k]>range.max?'↑':'?');const detail=c.length?(lo===hi?'Exato':'Entre valores')+' · stat '+(stats[k]||'—')+'/'+range.max:'fora ou incompleto · esperado '+range.min+'–'+range.max;return '<div class="iv-row"><b style="color:'+COLORS[k]+'">'+LABELS[k]+'</b><div><span class="track"><i style="width:'+pct+'%;background:'+COLORS[k]+'"></i></span><small>'+detail+'</small></div><strong>'+label+'</strong></div>'}).join('');const role=roleFromMoves(p);const overall=overallScore(p,q,map,confirmed);const moves=bestMoves(p).map(m=>'<article class="move"><div><b>'+m.name+'</b><small>'+(TYPE_NAMES[m.type]||m.type)+' · '+(m.category||'')+' · Nv '+m.learnLevel+'</small></div><strong>'+m.power+'</strong></article>').join('')||'<p>Nenhum golpe encontrado no catálogo.</p>';const [rarity,color]=qualityInfo(q);const shownIvTotal=total>0?String(total):(sumMin===sumMax?String(sumMin):sumMin+'–'+sumMax);const note=confirmed===6?'Precisão completa':'Estimativa parcial: melhore a precisão subindo de nível ou conferindo stats';$('#result').innerHTML='<div class="result-helper"><div class="result-top"><div class="poke-title"><img src="'+(p.image||'')+'" alt=""><div><h2>'+p.name+' <small>Lv '+level+'</small></h2><p><span style="color:'+color+'">'+rarity+' · '+q.toFixed(3)+'</span> · '+role.label+'</p><p>'+typeBadge(p.type1)+' '+typeBadge(p.type2)+'</p></div></div><div class="overall"><strong>'+overall+'%</strong><small>Overall</small></div></div><div class="result-body"><div class="iv-metrics"><div class="metric"><b>'+shownIvTotal+'</b><small>IV total</small></div><div class="metric"><b>'+confirmed+'/6</b><small>Confirmados</small></div><div class="metric"><b>Nv '+Math.max(...KEYS.map(k=>precisionLevel(p.base[k],q,k,clan)))+'</b><small>Precisão total</small></div><div class="metric"><b>'+note.split(':')[0]+'</b><small>Status</small></div></div><div>'+rows+'</div><h2>Golpes principais</h2><div class="moves">'+moves+'</div><div class="insights"><div class="insight"><h3>Leitura rápida</h3><ul><li>Overall compara IV, raridade, atributos úteis para a função e qualidade dos golpes.</li><li>O topo de referência usa qualidade Mítica 2.60 como padrão competitivo atual.</li><li>O nível atual não pesa no Overall, só ajuda a descobrir os IVs.</li></ul></div><div class="insight"><h3>Uso sugerido</h3><ul><li>Função provável: '+role.label+'.</li><li>Atributos mais importantes: '+(role.important||[role.main,role.secondary]).map(k=>LABELS[k]).filter((v,i,a)=>a.indexOf(v)===i).join(', ')+'.</li><li>Velocidade aparece como informação, mas tem peso baixo no Overall até haver confirmação de impacto real no combate.</li><li>'+note+'.</li></ul></div></div></div></div>'}
+function renderResult(p,level,q,clan,total,map){const stats=readStats();let confirmed=0,sumMin=0,sumMax=0;const rows=KEYS.map(k=>{const c=map[k]||[];const lo=c[0],hi=c.at(-1);if(c.length===1)confirmed++;if(c.length){sumMin+=lo;sumMax+=hi}const range=expectedRange(p.base[k],level,q,k,clan);const pct=c.length?((lo+hi)/2)/32*100:Math.min(100,(stats[k]||0)/(range.max||1)*100);const finalIv=c.length?(lo===hi?lo:Math.round((lo+hi)/2)):null;const label=c.length?'✓ '+finalIv:(stats[k]>range.max?'↑':'?');const detail=c.length?(lo===hi?'Exato':'Entre valores')+' · stat '+(stats[k]||'—')+'/'+range.max:'fora ou incompleto · esperado '+range.min+'–'+range.max;return '<div class="iv-row"><b style="color:'+COLORS[k]+'">'+LABELS[k]+'</b><div><span class="track"><i style="width:'+pct+'%;background:'+COLORS[k]+'"></i></span><small>'+detail+'</small></div><strong>'+label+'</strong></div>'}).join('');const role=roleFromMoves(p);const overall=overallScore(p,q,map,confirmed,stats,level,clan,total);const poder=pokemonPower(stats,q);const moves=bestMoves(p).map(m=>'<article class="move"><div><b>'+m.name+'</b><small>'+(TYPE_NAMES[m.type]||m.type)+' · '+(m.category||'')+' · Nv '+m.learnLevel+'</small></div><strong>'+m.power+'</strong></article>').join('')||'<p>Nenhum golpe encontrado no catálogo.</p>';const [rarity,color]=qualityInfo(q);const shownIvTotal=total>0?String(total):(sumMin===sumMax?String(sumMin):sumMin+'–'+sumMax);const note=confirmed===6?'Precisão completa':'Estimativa parcial: melhore a precisão subindo de nível ou conferindo stats';$('#result').innerHTML='<div class="result-helper"><div class="result-top"><div class="poke-title"><img src="'+(p.image||'')+'" alt=""><div><h2>'+p.name+' <small>Lv '+level+'</small></h2><p><span style="color:'+color+'">'+rarity+' · '+q.toFixed(3)+'</span> · '+role.label+'</p><p>'+typeBadge(p.type1)+' '+typeBadge(p.type2)+'</p></div></div><div class="overall"><strong>'+overall+'%</strong><small>Overall</small></div></div><div class="result-body"><div class="iv-metrics"><div class="metric"><b>'+shownIvTotal+'</b><small>IV total</small></div><div class="metric"><b>'+confirmed+'/6</b><small>Confirmados</small></div><div class="metric"><b>'+(poder?poder.toLocaleString('pt-BR'):'—')+'</b><small>Poder</small></div><div class="metric"><b>Nv '+Math.max(...KEYS.map(k=>precisionLevel(p.base[k],q,k,clan)))+'</b><small>Precisão total</small></div><div class="metric"><b>'+note.split(':')[0]+'</b><small>Status</small></div></div><div>'+rows+'</div><h2>Golpes principais</h2><div class="moves">'+moves+'</div><div class="insights"><div class="insight"><h3>Leitura rápida</h3><ul><li>Overall compara IV, raridade, atributos úteis para a função e qualidade dos golpes.</li><li>O topo de referência usa qualidade Mítica 2.60 como padrão competitivo atual.</li><li>O nível atual não pesa no Overall, só ajuda a descobrir os IVs.</li></ul></div><div class="insight"><h3>Uso sugerido</h3><ul><li>Função provável: '+role.label+'.</li><li>Atributos mais importantes: '+(role.important||[role.main,role.secondary]).map(k=>LABELS[k]).filter((v,i,a)=>a.indexOf(v)===i).join(', ')+'.</li><li>Velocidade aparece como informação, mas tem peso baixo no Overall até haver confirmação de impacto real no combate.</li><li>'+note+'.</li></ul></div></div></div></div>'}
 
 function readNumberAfterLabels(flat,tight,labels){
   for(const label of labels){

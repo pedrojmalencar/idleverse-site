@@ -122,7 +122,7 @@
         <div class="card-section">
           <h3>2. Confira as informações</h3>
           <div class="form-grid">
-            <label class="field"><span>Nível</span><input id="levelInput" type="number" min="1" max="500" value="1"></label>
+            <label class="field"><span>Nível</span><input id="levelInput" type="number" min="1" max="9999" value="1"></label>
             <label class="field"><span>Quality</span><input id="qualityInput" type="number" min="0.001" max="9.999" step="0.001" value="1.000"></label>
             <label class="field"><span>IV total, se aparecer</span><input id="ivTotalInput" type="number" min="0" max="192" placeholder="Opcional"></label>
             <label class="field"><span>Bônus de clã %</span><input id="clanInput" type="number" min="0" max="100" step="1" value="0"></label>
@@ -243,7 +243,7 @@ function bestMoves(p){
 }
 function roleFromMoves(p){const moves=bestMoves(p);const phys=moves.filter(m=>/PHYSICAL|FISICO|FÍSICO/.test(m.category)).reduce((s,m)=>s+m.power,0);const spec=moves.filter(m=>/SPECIAL|ESPECIAL/.test(m.category)).reduce((s,m)=>s+m.power,0);const bulkMain=p.base.def>=p.base.spDef?'def':'spDef';if(phys>spec*1.25)return{label:'Atacante físico',main:'atk',secondary:bulkMain,important:['atk',bulkMain,'hp'],speedWeight:.04};if(spec>phys*1.25)return{label:'Atacante especial',main:'spAtk',secondary:bulkMain,important:['spAtk',bulkMain,'hp'],speedWeight:.04};if((p.base.def+p.base.spDef+p.base.hp)>(p.base.atk+p.base.spAtk+p.base.speed)*1.08)return{label:'Tanque',main:bulkMain,secondary:'hp',important:[bulkMain,'hp',bulkMain==='def'?'spDef':'def'],speedWeight:.02};return{label:'Misto',main:'atk',secondary:'spAtk',important:['atk','spAtk','hp'],speedWeight:.03}}
 function statIvAvg(map,k){const a=map[k]||[];return a.length?(a[0]+a.at(-1))/2:16}function overallScore(p,q,map,confirmed){const role=roleFromMoves(p);const ivAvg=KEYS.reduce((s,k)=>s+statIvAvg(map,k),0)/6;const ivScore=ivAvg/32*28;const rarityScore=Math.min(1,q/2.6)*24;const useful=role.important||[role.main,role.secondary,'hp'];const usefulScore=((statIvAvg(map,useful[0])/32)*.48+(statIvAvg(map,useful[1])/32)*.32+(statIvAvg(map,useful[2])/32)*.20)*24;const speedScore=(statIvAvg(map,'speed')/32)*(role.speedWeight||.03)*10;const bulkAvg=(['hp','def','spDef'].reduce((s,k)=>s+statIvAvg(map,k),0)/3)/32;const moveTypes=new Set(bestMoves(p).filter(m=>m.power>0).map(m=>m.type));const power=Math.min(1,bestMoves(p).reduce((s,m)=>s+m.power,0)/720);const kitScore=(Math.min(1,moveTypes.size/4)*.35+power*.65)*16;const confidence=.72+confirmed/6*.28;return Math.max(1,Math.min(100,Math.round((ivScore+rarityScore+usefulScore+bulkAvg*7+kitScore+speedScore)*confidence)))}
-function calculate(){if(!catalog.length){renderError('Catálogo ainda carregando. Tente novamente em alguns segundos.');loadCatalog().catch(()=>{});return}const p=pokemonByInput();if(!p){renderError('Pokémon não encontrado no catálogo. Confira o nome lido pelo OCR ou digite manualmente.');return}const level=Math.max(1,Math.min(500,Number($('#levelInput').value)||1));const q=Number($('#qualityInput').value)||1;const clan=Number($('#clanInput').value)||0;const total=Number($('#ivTotalInput').value)||0;let map=Object.fromEntries(KEYS.map(k=>[k,possibleGrowth(p.base[k],readStats()[k],level,q,k,clan)]));map=refineByTotal(map,total);renderResult(p,level,q,clan,total,map)}
+function calculate(){if(!catalog.length){renderError('Catálogo ainda carregando. Tente novamente em alguns segundos.');loadCatalog().catch(()=>{});return}const p=pokemonByInput();if(!p){renderError('Pokémon não encontrado no catálogo. Confira o nome lido pelo OCR ou digite manualmente.');return}const level=Math.max(1,Math.min(9999,Number($('#levelInput').value)||1));const q=Number($('#qualityInput').value)||1;const clan=Number($('#clanInput').value)||0;const total=Number($('#ivTotalInput').value)||0;let map=Object.fromEntries(KEYS.map(k=>[k,possibleGrowth(p.base[k],readStats()[k],level,q,k,clan)]));map=refineByTotal(map,total);renderResult(p,level,q,clan,total,map)}
 function renderError(msg){$('#result').innerHTML='<div class="result-empty error"><div><h2>Não foi possível calcular</h2><p>'+msg+'</p></div></div>'}
 function renderResult(p,level,q,clan,total,map){const stats=readStats();let confirmed=0,sumMin=0,sumMax=0;const rows=KEYS.map(k=>{const c=map[k]||[];const lo=c[0],hi=c.at(-1);if(c.length===1)confirmed++;if(c.length){sumMin+=lo;sumMax+=hi}const range=expectedRange(p.base[k],level,q,k,clan);const pct=c.length?((lo+hi)/2)/32*100:Math.min(100,(stats[k]||0)/(range.max||1)*100);const finalIv=c.length?(lo===hi?lo:Math.round((lo+hi)/2)):null;const label=c.length?'✓ '+finalIv:(stats[k]>range.max?'↑':'?');const detail=c.length?(lo===hi?'Exato':'Entre valores')+' · stat '+(stats[k]||'—')+'/'+range.max:'fora ou incompleto · esperado '+range.min+'–'+range.max;return '<div class="iv-row"><b style="color:'+COLORS[k]+'">'+LABELS[k]+'</b><div><span class="track"><i style="width:'+pct+'%;background:'+COLORS[k]+'"></i></span><small>'+detail+'</small></div><strong>'+label+'</strong></div>'}).join('');const role=roleFromMoves(p);const overall=overallScore(p,q,map,confirmed);const moves=bestMoves(p).map(m=>'<article class="move"><div><b>'+m.name+'</b><small>'+(TYPE_NAMES[m.type]||m.type)+' · '+(m.category||'')+' · Nv '+m.learnLevel+'</small></div><strong>'+m.power+'</strong></article>').join('')||'<p>Nenhum golpe encontrado no catálogo.</p>';const [rarity,color]=qualityInfo(q);const shownIvTotal=total>0?String(total):(sumMin===sumMax?String(sumMin):sumMin+'–'+sumMax);const note=confirmed===6?'Precisão completa':'Estimativa parcial: melhore a precisão subindo de nível ou conferindo stats';$('#result').innerHTML='<div class="result-helper"><div class="result-top"><div class="poke-title"><img src="'+(p.image||'')+'" alt=""><div><h2>'+p.name+' <small>Lv '+level+'</small></h2><p><span style="color:'+color+'">'+rarity+' · '+q.toFixed(3)+'</span> · '+role.label+'</p><p>'+typeBadge(p.type1)+' '+typeBadge(p.type2)+'</p></div></div><div class="overall"><strong>'+overall+'%</strong><small>Overall</small></div></div><div class="result-body"><div class="iv-metrics"><div class="metric"><b>'+shownIvTotal+'</b><small>IV total</small></div><div class="metric"><b>'+confirmed+'/6</b><small>Confirmados</small></div><div class="metric"><b>Nv '+Math.max(...KEYS.map(k=>precisionLevel(p.base[k],q,k,clan)))+'</b><small>Precisão total</small></div><div class="metric"><b>'+note.split(':')[0]+'</b><small>Status</small></div></div><div>'+rows+'</div><h2>Golpes principais</h2><div class="moves">'+moves+'</div><div class="insights"><div class="insight"><h3>Leitura rápida</h3><ul><li>Overall compara IV, raridade, atributos úteis para a função e qualidade dos golpes.</li><li>O topo de referência usa qualidade Mítica 2.60 como padrão competitivo atual.</li><li>O nível atual não pesa no Overall, só ajuda a descobrir os IVs.</li></ul></div><div class="insight"><h3>Uso sugerido</h3><ul><li>Função provável: '+role.label+'.</li><li>Atributos mais importantes: '+(role.important||[role.main,role.secondary]).map(k=>LABELS[k]).filter((v,i,a)=>a.indexOf(v)===i).join(', ')+'.</li><li>Velocidade aparece como informação, mas tem peso baixo no Overall até haver confirmação de impacto real no combate.</li><li>'+note+'.</li></ul></div></div></div></div>'}
 
@@ -261,7 +261,54 @@ function readNumberAfterLabels(flat,tight,labels){
   }
   return null;
 }
+const CARD_STAT_LABELS=[['hp',['hp']],['atk',['atk']],['def',['def']],['spAtk',['spa']],['spDef',['spd']],['speed',['spe']]];
+// O card gerado pelo botao "Card" do IV Helper do app tem layout proprio:
+// cada atributo aparece como "HP  24 IV" e, na linha seguinte, "1040 / 1156"
+// (valor atual / teto no nivel). O parser generico de tooltip pegava o
+// PRIMEIRO numero depois do rotulo - que aqui e o IV, nao o atributo - e
+// jogava no campo de atributo. Com HP=24 no lugar de 1040 nada fechava, e o
+// site nao confirmava IV nenhum. Este parser le os dois numeros no papel
+// certo; os IVs do card ficam em out.ivs, disponiveis para conferencia pelo
+// __idleVerseIvParseDebug (o calculo em si continua saindo dos atributos).
+function parseIdleVerseCard(text){
+  const flat=norm(String(text||'').replace(/,/g,'.')).replace(/[^a-z0-9.\/%]+/g,' ').replace(/\s+/g,' ').trim();
+  const out={pokemon:null,level:null,quality:null,ivTotal:null,stats:{},ivs:{}};
+  // O card e uma GRADE 2x3, e o OCR le linha a linha atravessando as duas
+  // colunas: "HP 24 IV   Atk 27 IV" numa linha e "815 / 909   980 / 1032" na
+  // seguinte. Ou seja, o par de numeros NAO vem colado no seu rotulo - por
+  // isso casar "rotulo depois numeros" pegava os numeros do vizinho.
+  // Aqui coletamos rotulos e pares separadamente, cada um na ordem de leitura,
+  // e casamos por posicao. Isso funciona tanto na grade 2x3 quanto numa lista
+  // de uma coluna so.
+  const rotulos=[...flat.matchAll(/\b(hp|atk|def|spa|spd|spe)\b[^a-z0-9]{0,4}(\d{1,2})\s*iv\b/g)];
+  if(rotulos.length<2)return null;
+  // Pares "atributo / teto" DEPOIS do primeiro rotulo: assim a data do
+  // cabecalho (04/08/2026) e o "158/192" do IV total ficam de fora.
+  const pares=[...flat.matchAll(/(\d{2,6})(?:\s*[\/l|]\s*|\s+)(\d{2,6})/g)].filter(m=>m.index>rotulos[0].index);
+  const CHAVE={hp:'hp',atk:'atk',def:'def',spa:'spAtk',spd:'spDef',spe:'speed'};
+  rotulos.forEach((m,i)=>{
+    const key=CHAVE[m[1]];
+    out.ivs[key]=Number(m[2]);
+    if(pares[i])out.stats[key]=Number(pares[i][1]);
+  });
+  const blocos=rotulos.length;
+  const lv=flat.match(/\bnivel\s*(\d{1,4})\b/)||flat.match(/\b(?:lv|nv)\s*\.?\s*(\d{1,4})\b/);
+  if(lv)out.level=Number(lv[1]);
+  const iv=flat.match(/\biv\s*total\b[^0-9]{0,20}(\d{1,3})\s*[\/l|]\s*192\b/)||flat.match(/(\d{1,3})\s*[\/l|]\s*192\b/);
+  if(iv)out.ivTotal=Number(iv[1]);
+  // Se o OCR nao leu o "IV total", soma os IVs que os proprios blocos trazem -
+  // e o mesmo numero, e serve pro refineByTotal desambiguar.
+  if(out.ivTotal==null&&blocos===6){
+    const soma=Object.values(out.ivs).reduce((s,v)=>s+v,0);
+    if(soma>0&&soma<=192)out.ivTotal=soma;
+  }
+  out.quality=parseQuality(text,Number($('#qualityInput')?.value)||1);
+  if(catalog.length)out.pokemon=pokemonFromText(text);
+  return out;
+}
 function parsePiwTooltipText(text){
+  const card=parseIdleVerseCard(text);
+  if(card)return card;
   const raw=String(text||'');
   const normalized=norm(raw.replace(/,/g,'.'));
   const flat=normalized.replace(/[^a-z0-9.\/%]+/g,' ').replace(/\s+/g,' ').trim();
@@ -358,8 +405,16 @@ async function prepareImageForOcr(file){
     ctx.drawImage(img,0,0,canvas.width,canvas.height);
     const data=ctx.getImageData(0,0,canvas.width,canvas.height);
     const px=data.data;
+    // O card do Idle Verse (e os tooltips do jogo) sao texto CLARO sobre fundo
+    // ESCURO. O Tesseract foi treinado com texto escuro sobre fundo claro e
+    // erra muito no inverso - era por isso que o card quase nao era lido.
+    // Mede o brilho medio e inverte quando a imagem e escura.
+    let soma=0;
+    for(let i=0;i<px.length;i+=4)soma+=0.299*px[i]+0.587*px[i+1]+0.114*px[i+2];
+    const inverter=(soma/(px.length/4))<128;
     for(let i=0;i<px.length;i+=4){
       let g=0.299*px[i]+0.587*px[i+1]+0.114*px[i+2];
+      if(inverter)g=255-g;
       g=(g-128)*1.85+128;
       g=Math.max(0,Math.min(255,g));
       if(g>185)g=255;

@@ -146,8 +146,8 @@
     }
 
     h1, h2, h3,
-    .logo, .kicker, .btn, .plan .price, .plan h3, .mock-brand,
-    .step::before, .plan-tag, .video-label {
+    .logo, .kicker, .btn, .plan .price, .plan h3,
+    .step::before, .plan-tag {
       font-family: "Space Grotesk", "Inter", sans-serif;
     }
 
@@ -206,7 +206,8 @@
       background: #000;
       overflow: hidden;
     }
-    .showcase-gif img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+    .showcase-gif img,
+    .showcase-gif video { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; background: #000; }
     .showcase-card { min-height: 260px; padding: 20px; background: radial-gradient(circle at 20% 0%, rgba(246,196,69,.16), transparent 30%), linear-gradient(145deg,#151f2e,#0b1018); }
     .showcase-card .bar { height: 34px; border-radius: 8px; background: #0f1520; border: 1px solid #2b3548; margin-bottom: 14px; }
     .showcase-card .grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; }
@@ -317,6 +318,27 @@
       color: var(--accent);
     }
 
+    .hero-punch {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 20px;
+      padding: 10px 18px;
+      border: 1px solid rgba(246, 196, 69, 0.4);
+      border-radius: 999px;
+      background: rgba(246, 196, 69, 0.12);
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 15px;
+    }
+    .hero-punch strong {
+      color: var(--text);
+      font-weight: 800;
+    }
+    @media (max-width: 900px) {
+      .hero-punch { margin-left: auto; margin-right: auto; }
+    }
+
     .hero p.lead {
       font-size: clamp(16px, 1.6vw, 19px);
       color: var(--text-dim);
@@ -338,9 +360,10 @@
 
     .hero-badges {
       display: flex;
-      gap: 18px;
-      justify-content: flex-start;
+      gap: 10px 18px;
+      justify-content: center;
       flex-wrap: wrap;
+      margin-top: 16px;
       font-size: 13px;
       color: var(--text-dim);
     }
@@ -365,8 +388,7 @@
     .mockup-frame video {
       display: block;
       width: 100%;
-      aspect-ratio: 832 / 432;
-      object-fit: contain;
+      height: auto;
       background: #000;
     }
 
@@ -390,97 +412,11 @@
     }
     .video-sound-btn:hover { background: rgba(20, 22, 28, 0.92); }
 
-    .mock-toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 8px 14px;
-      background: var(--panel);
-      border-bottom: 1px solid var(--border);
-      flex-wrap: wrap;
-    }
-
-    .mock-brand { display: flex; align-items: center; gap: 7px; font-weight: 700; letter-spacing: 1.2px; }
-    .mock-brand i { font-style: normal; color: var(--accent); font-size: 15px; }
-    .mock-brand small { color: var(--text-dim); font-weight: 400; letter-spacing: 0; }
-
-    .mock-tabs { display: flex; gap: 4px; flex-wrap: wrap; }
-    .mock-tab {
-      padding: 4px 12px;
-      border-radius: 7px 7px 0 0;
-      color: var(--text-dim);
-      border: 1px solid transparent;
-    }
-    .mock-tab.active {
-      color: var(--text);
-      background: var(--panel-header);
-      border-color: var(--border);
-      border-bottom: 2px solid var(--accent);
-      font-weight: 600;
-    }
-
-    .mock-chip {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 10px;
-      border-radius: 999px;
-      background: var(--accent);
-      color: var(--accent-dark);
-    }
-
-    .mock-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      padding: 6px;
-    }
-
-    .mock-pane {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    .mock-pane-header {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 8px;
-      background: var(--panel-header);
-      border-bottom: 1px solid var(--border);
-    }
-    .mock-pane-header .name { color: var(--accent); font-weight: 600; flex: 1; }
-    .mock-pane-header .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
-    .mock-pane-header .ctrl { color: var(--text-dim); font-size: 11px; letter-spacing: 2px; }
-
-    .mock-pane-body {
-      height: 110px;
-      background:
-        linear-gradient(160deg, #1a2030 0%, #101521 60%, #0c1019 100%);
-      position: relative;
-    }
-    .mock-pane-body::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(circle at 25% 35%, rgba(246,196,69,0.14) 0 8%, transparent 9%),
-        radial-gradient(circle at 70% 60%, rgba(76,175,109,0.16) 0 6%, transparent 7%),
-        radial-gradient(circle at 55% 25%, rgba(120,150,255,0.12) 0 5%, transparent 6%);
-    }
-
     .mockup-caption {
       text-align: center;
       font-size: 12px;
       color: var(--text-dim);
       margin-top: 12px;
-    }
-
-    @media (max-width: 1024px) {
-      .mock-grid { grid-template-columns: 1fr; }
-      .mock-pane:nth-child(n+3) { display: none; }
     }
 
     /* ---------- Antes / Depois ---------- */
@@ -836,6 +772,7 @@
       <div class="hero-grid">
         <div class="hero-text">
           <h1>O hub definitivo para organizar <em>jogos, contas e trabalho</em>.</h1>
+          <p class="hero-punch">🔥 Aposente sua bagunça <strong>por menos de R$10,00</strong></p>
           <p class="lead">
             Organize varias sessoes em uma unica janela, mantenha logins separados e configure cada menu para o que voce precisa: jogos, trabalho, estudos, paineis, redes sociais ou projetos.
           </p>
@@ -843,48 +780,20 @@
             <a class="btn btn-primary btn-big" href="#planos">Quero o Idle Verse →</a>
             <a class="btn btn-big" href="#recursos">Ver recursos</a>
           </div>
+        </div>
+
+        <!-- Vídeo demonstrando como usar o app -->
+        <div class="hero-video">
+          <div class="mockup-frame" id="hero-video-frame">
+            <video src="homeprincipal.mp4" autoplay muted loop playsinline preload="metadata"></video>
+          </div>
+          <p class="mockup-caption">Organize suas contas em uma única janela.</p>
           <div class="hero-badges">
             <span>Ate 4 telas por menu</span>
             <span>Sessoes separadas e salvas</span>
             <span>Menus para jogos e trabalho</span>
             <span>Windows</span>
           </div>
-        </div>
-
-        <!-- Vídeo demonstrando como usar o app -->
-        <div class="hero-video">
-          <div class="mockup-frame" id="hero-video-frame">
-            <div class="mock-toolbar">
-              <div class="mock-brand"><i>⬢</i> IDLE VERSE <small>multi-client hub</small></div>
-              <div class="mock-tabs">
-                <div class="mock-tab active">Jogo Idle</div>
-                <div class="mock-tab">Trabalho</div>
-                <div class="mock-tab">Cliente A</div>
-              </div>
-              <div class="mock-chip">VIP</div>
-            </div>
-            <div class="mock-grid">
-              <div class="mock-pane">
-                <div class="mock-pane-header"><span class="dot"></span><span class="name">Conta 1</span><span class="ctrl">🔊 ⛶ ↻</span></div>
-                <div class="mock-pane-body"></div>
-              </div>
-              <div class="mock-pane">
-                <div class="mock-pane-header"><span class="dot"></span><span class="name">Conta 2</span><span class="ctrl">🔊 ⛶ ↻</span></div>
-                <div class="mock-pane-body"></div>
-              </div>
-              <div class="mock-pane">
-                <div class="mock-pane-header"><span class="dot"></span><span class="name">Conta 3</span><span class="ctrl">🔊 ⛶ ↻</span></div>
-                <div class="mock-pane-body"></div>
-              </div>
-              <div class="mock-pane">
-                <div class="mock-pane-header"><span class="dot"></span><span class="name">Conta 4</span><span class="ctrl">🔊 ⛶ ↻</span></div>
-                <div class="mock-pane-body"></div>
-              </div>
-            </div>
-              <span class="video-label">Ver como funciona</span>
-            </div>
-          </div>
-          <p class="mockup-caption">Organize suas contas em uma única janela.</p>
         </div>
       </div>
     </div>
@@ -946,7 +855,7 @@
           </ul>
         </div>
         <div class="showcase-gif">
-          <div class="showcase-card"><div class="bar"></div><div class="grid"><div class="cell"><span class="pill">Jogo</span><i class="line gold"></i><i class="line"></i></div><div class="cell"><span class="pill">Trabalho</span><i class="line blue"></i><i class="line"></i></div><div class="cell"><span class="pill">Estudos</span><i class="line"></i><i class="line blue"></i></div><div class="cell"><span class="pill">Projeto</span><i class="line gold"></i><i class="line"></i></div></div></div>
+          <video src="alternarmenu.mp4" controls muted preload="metadata" playsinline></video>
         </div>
       </div>
 
@@ -1175,6 +1084,21 @@
       </p>
     </div>
   </footer>
+
+  <script>
+    document.querySelectorAll('video').forEach((video) => {
+      const lockMuted = () => {
+        video.muted = true;
+        video.defaultMuted = true;
+        video.volume = 0;
+        video.setAttribute('muted', '');
+      };
+      lockMuted();
+      video.addEventListener('volumechange', lockMuted);
+      video.addEventListener('play', lockMuted);
+      video.addEventListener('loadedmetadata', lockMuted);
+    });
+  </script>
 
   <script>
     // Aplica os links configurados no topo da página

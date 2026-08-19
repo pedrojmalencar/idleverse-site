@@ -58,21 +58,21 @@
       },
       semestral: {
         nome: "VIP Semestral",
-        preco: "R$ 53,46",
+        preco: "R$ 52,90",
         precoOriginal: "R$ 59,40",
         cobranca: "A cada 6 meses (6×R$ 9,90) · 10% de desconto",
         resumo: "5 menus, até 20 telas no total. Ganha o plano Básico vitalício de brinde e mantém os benefícios VIP enquanto a assinatura estiver ativa.",
-        valorPix: "53,46",
-        msg: "Olá! Quero assinar o plano *VIP Semestral* do Idle Verse (R$ 53,46 a cada 6 meses). Já fiz o PIX e vou enviar o comprovante agora."
+        valorPix: "52,90",
+        msg: "Olá! Quero assinar o plano *VIP Semestral* do Idle Verse (R$ 52,90 a cada 6 meses). Já fiz o PIX e vou enviar o comprovante agora."
       },
       anual: {
         nome: "VIP Anual",
-        preco: "R$ 95,04",
+        preco: "R$ 94,90",
         precoOriginal: "R$ 118,80",
         cobranca: "A cada 12 meses (12×R$ 9,90) · 20% de desconto",
         resumo: "5 menus, até 20 telas no total. Ganha o plano Básico vitalício de brinde e mantém os benefícios VIP enquanto a assinatura estiver ativa.",
-        valorPix: "95,04",
-        msg: "Olá! Quero assinar o plano *VIP Anual* do Idle Verse (R$ 95,04 a cada 12 meses). Já fiz o PIX e vou enviar o comprovante agora."
+        valorPix: "94,90",
+        msg: "Olá! Quero assinar o plano *VIP Anual* do Idle Verse (R$ 94,90 a cada 12 meses). Já fiz o PIX e vou enviar o comprovante agora."
       }
     };
   </script>
@@ -512,6 +512,10 @@
     // numero pra fazer conta, e formata de volta do mesmo jeito.
     function paraNumero(valorPixStr) { return Number(String(valorPixStr).replace(",", ".")) || 0; }
     function paraValorPix(numero) { return numero.toFixed(2).replace(".", ","); }
+    // Arredonda pra baixo ate terminar em ",90" (17,91 -> 17,90) - deixa
+    // qualquer preco com cupom visualmente igual ao resto do site, que so
+    // usa precos terminados em ,90.
+    function paraNoventa(numero) { return Math.floor(numero - 0.9) + 0.9; }
 
     // Estado do preco final calculado (com ou sem cupom) - usado tanto pra
     // exibir na tela quanto pra montar a mensagem do WhatsApp e o registro
@@ -535,7 +539,7 @@
 
       const base = paraNumero(dadosAtuais.valorPix);
       if (cupomInfo) {
-        const valorFinal = paraValorPix(base * (1 - cupomInfo.desconto));
+        const valorFinal = paraValorPix(paraNoventa(base * (1 - cupomInfo.desconto)));
         precoFinalAtual = { valorPix: valorFinal, cupom: cupomTexto, desconto: cupomInfo.desconto };
         document.getElementById("out-preco").textContent = "R$ " + valorFinal;
         document.getElementById("out-preco-old").textContent = "R$ " + dadosAtuais.valorPix;

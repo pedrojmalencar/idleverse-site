@@ -745,7 +745,8 @@
   </style>
 <style id="mobile-nav-fix">
 .nav-toggle{display:none;align-items:center;justify-content:center;min-height:38px;padding:0 13px;border:1px solid rgba(255,255,255,.16);border-radius:999px;background:rgba(255,255,255,.06);color:var(--text);font-weight:800;cursor:pointer}
-@media(max-width:900px){header .nav{position:relative;flex-wrap:wrap}.nav-toggle{display:inline-flex;margin-left:auto}.nav-links{display:none!important;position:absolute;left:16px;right:16px;top:calc(100% + 8px);z-index:80;flex-direction:column;gap:0;padding:8px;border:1px solid var(--border);border-radius:16px;background:rgba(10,15,23,.98);box-shadow:0 18px 45px rgba(0,0,0,.55)}header.nav-open .nav-links{display:flex!important}.nav-links a{display:block;padding:13px 14px;border-radius:10px}.nav-links a:hover,.nav-links a.active{background:rgba(246,196,69,.1);color:var(--text)}.nav .btn-primary{min-height:38px;padding:0 13px;font-size:13px}body.nav-open{overflow:hidden}}
+.mobile-quicklinks{display:none}
+@media(max-width:900px){header .nav{position:relative;flex-wrap:wrap}.nav-toggle{display:inline-flex;margin-left:auto}.nav-links{display:none!important;position:absolute;left:16px;right:16px;top:calc(100% + 8px);z-index:80;flex-direction:column;gap:0;padding:8px;border:1px solid var(--border);border-radius:16px;background:rgba(10,15,23,.98);box-shadow:0 18px 45px rgba(0,0,0,.55)}header.nav-open .nav-links{display:flex!important}.nav-links a{display:block;padding:13px 14px;border-radius:10px}.nav-links a:hover,.nav-links a.active{background:rgba(246,196,69,.1);color:var(--text)}.nav .btn-primary{min-height:38px;padding:0 13px;font-size:13px}body.nav-open{overflow:hidden}.mobile-quicklinks{display:flex;gap:8px;padding:10px 16px;overflow-x:auto;background:rgba(15,17,21,.7);border-bottom:1px solid var(--border)}.mobile-quicklinks a{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:rgba(246,196,69,.12);border:1px solid rgba(246,196,69,.38);color:var(--accent);font-size:13px;font-weight:800;white-space:nowrap;text-decoration:none;flex:0 0 auto}}
 @media(max-width:520px){.wrap{width:min(100% - 22px,1180px)}.logo{font-size:15px;letter-spacing:1px}.nav{gap:8px}.nav .btn-primary{order:3;width:100%;margin-top:2px}.nav-links{left:11px;right:11px}.hero{padding-top:28px}.hero-card,.feature,.plans-cta{border-radius:18px;padding:16px}.feature{gap:16px}.video-box{border-radius:14px}h1{font-size:clamp(34px,12vw,48px)}.lead{font-size:16px}.hero-actions .btn{width:100%}}
 </style>
 </head>
@@ -765,6 +766,11 @@
       <a class="btn btn-primary" href="#planos">Quero o Idle Verse</a>
     </div>
   </header>
+
+  <div class="mobile-quicklinks">
+    <a href="pokeidle.html">🎮 Módulo PokeIdle</a>
+    <a href="iv-helper.html">🧬 IV Helper</a>
+  </div>
 
   <!-- ==================== HERO ==================== -->
   <section class="hero" id="inicio">
@@ -953,14 +959,13 @@
 
       <div class="plans">
         <div class="plan promo">
-          <span class="plan-tag tag-promo">🔥 Promoção</span>
           <h3>Básico</h3>
           <p class="plan-desc">Para dominar as contas de uma única finalidade.</p>
           <div class="price-line">
-            <span class="price-old">R$ 19,90</span>
-            <span class="price">R$ 9,90</span>
+            <span class="price-old"></span>
+            <span class="price">R$ 19,90</span>
           </div>
-          <p class="price-note">Pagamento único · licença vitalícia — oferta por tempo limitado</p>
+          <p class="price-note">Pagamento único · licença vitalícia</p>
           <ul>
             <li>1 menu com 4 telas</li>
             <li>Configurável para qualquer site (jogo, e-mail, painel...)</li>
@@ -984,9 +989,9 @@
 
           <div class="price-line">
             <span class="price-old" id="vip-price-old"></span>
-            <span class="price" id="vip-price">R$ 14,90</span>
+            <span class="price" id="vip-price">R$ 9,90</span>
           </div>
-          <p class="price-note" id="vip-price-note">1º mês R$ 14,90 · depois R$ 5,00/mês · cancele quando quiser</p>
+          <p class="price-note" id="vip-price-note">Cobrado todo mês · cancele quando quiser</p>
           <ul>
             <li><strong>5 menus</strong> — um propósito diferente em cada</li>
             <li><strong>20 telas</strong> no total (4 por menu)</li>
@@ -1108,9 +1113,9 @@
 
     // Seletor de período do VIP (mensal / semestral / anual)
     const VIP_PERIODOS = {
-      mensal:    { preco: 'R$ 14,90', old: '', nota: '1º mês R$ 14,90 · depois R$ 5,00/mês · cancele quando quiser' },
-      semestral: { preco: 'R$ 35,90', old: 'R$ 39,90', nota: 'a cada 6 meses (1º mês R$ 14,90 + 5×R$ 5,00) · 10% de desconto' },
-      anual:     { preco: 'R$ 55,90', old: 'R$ 69,90', nota: 'a cada 12 meses (1º mês R$ 14,90 + 11×R$ 5,00) · 20% de desconto' }
+      mensal:    { preco: 'R$ 9,90', old: '', nota: 'Cobrado todo mês · cancele quando quiser' },
+      semestral: { preco: 'R$ 53,46', old: 'R$ 59,40', nota: 'a cada 6 meses (6×R$ 9,90) · 10% de desconto' },
+      anual:     { preco: 'R$ 95,04', old: 'R$ 118,80', nota: 'a cada 12 meses (12×R$ 9,90) · 20% de desconto' }
     };
 
     function setVipPeriodo(periodo) {

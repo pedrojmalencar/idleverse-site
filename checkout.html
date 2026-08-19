@@ -23,15 +23,25 @@
     const PIX_CHAVE = "132.561.117-42";
     const WHATSAPP_NUMERO = "5521972355910"; // 55 + DDD + número
 
+    // Cupons de parceiros/criadores - chave em MAIÚSCULO, desconto em fração
+    // (0.10 = 10%). Pra adicionar um novo cupom, so acrescentar aqui.
+    const CUPONS = {
+      YAGOD10: { desconto: 0.10 }
+    };
+
+    // Link (Apps Script Web App) que recebe cada venda pra registro/comissao
+    // de cupom - ver instrucoes de configuracao no final deste arquivo.
+    const REGISTRO_WEBHOOK_URL = "COLE_AQUI_A_URL_DO_APPS_SCRIPT";
+
     const PLANOS = {
       basico: {
         nome: "Básico",
-        preco: "R$ 9,90",
-        precoOriginal: "R$ 19,90",
-        cobranca: "Pagamento único · licença vitalícia — oferta por tempo limitado",
+        preco: "R$ 19,90",
+        precoOriginal: "",
+        cobranca: "Pagamento único · licença vitalícia",
         resumo: "1 menu com 4 telas, configurável para qualquer site (jogo, e-mail, painel de trabalho...).",
-        valorPix: "9,90",
-        msg: "Olá! Quero o plano *Básico* do Idle Verse (de R$ 19,90 por R$ 9,90, pagamento único). Já fiz o PIX e vou enviar o comprovante agora. Meu e-mail: "
+        valorPix: "19,90",
+        msg: "Olá! Quero o plano *Básico* do Idle Verse (R$ 19,90, pagamento único). Já fiz o PIX e vou enviar o comprovante agora."
       }
     };
 
@@ -39,30 +49,30 @@
     const VIP_PERIODOS = {
       mensal: {
         nome: "VIP Mensal",
-        preco: "R$ 14,90",
+        preco: "R$ 9,90",
         precoOriginal: "",
-        cobranca: "1º mês R$ 14,90 · depois R$ 5,00/mês · cancele quando quiser",
+        cobranca: "Cobrado todo mês · cancele quando quiser",
         resumo: "5 menus, até 20 telas no total. Ganha o plano Básico vitalício de brinde e mantém os benefícios VIP enquanto a assinatura estiver ativa.",
-        valorPix: "14,90",
-        msg: "Olá! Quero assinar o plano *VIP Mensal* do Idle Verse (R$ 14,90 no 1º mês, depois R$ 5,00/mês). Já fiz o PIX e vou enviar o comprovante agora. Meu e-mail: "
+        valorPix: "9,90",
+        msg: "Olá! Quero assinar o plano *VIP Mensal* do Idle Verse (R$ 9,90/mês). Já fiz o PIX e vou enviar o comprovante agora."
       },
       semestral: {
         nome: "VIP Semestral",
-        preco: "R$ 35,90",
-        precoOriginal: "R$ 39,90",
-        cobranca: "A cada 6 meses (1º mês R$ 14,90 + 5×R$ 5,00) · 10% de desconto",
+        preco: "R$ 53,46",
+        precoOriginal: "R$ 59,40",
+        cobranca: "A cada 6 meses (6×R$ 9,90) · 10% de desconto",
         resumo: "5 menus, até 20 telas no total. Ganha o plano Básico vitalício de brinde e mantém os benefícios VIP enquanto a assinatura estiver ativa.",
-        valorPix: "35,90",
-        msg: "Olá! Quero assinar o plano *VIP Semestral* do Idle Verse (R$ 35,90 a cada 6 meses). Já fiz o PIX e vou enviar o comprovante agora. Meu e-mail: "
+        valorPix: "53,46",
+        msg: "Olá! Quero assinar o plano *VIP Semestral* do Idle Verse (R$ 53,46 a cada 6 meses). Já fiz o PIX e vou enviar o comprovante agora."
       },
       anual: {
         nome: "VIP Anual",
-        preco: "R$ 55,90",
-        precoOriginal: "R$ 69,90",
-        cobranca: "A cada 12 meses (1º mês R$ 14,90 + 11×R$ 5,00) · 20% de desconto",
+        preco: "R$ 95,04",
+        precoOriginal: "R$ 118,80",
+        cobranca: "A cada 12 meses (12×R$ 9,90) · 20% de desconto",
         resumo: "5 menus, até 20 telas no total. Ganha o plano Básico vitalício de brinde e mantém os benefícios VIP enquanto a assinatura estiver ativa.",
-        valorPix: "55,90",
-        msg: "Olá! Quero assinar o plano *VIP Anual* do Idle Verse (R$ 55,90 a cada 12 meses). Já fiz o PIX e vou enviar o comprovante agora. Meu e-mail: "
+        valorPix: "95,04",
+        msg: "Olá! Quero assinar o plano *VIP Anual* do Idle Verse (R$ 95,04 a cada 12 meses). Já fiz o PIX e vou enviar o comprovante agora."
       }
     };
   </script>
@@ -329,6 +339,43 @@
       margin-top: 14px;
       line-height: 1.6;
     }
+
+    .field { margin-bottom: 14px; }
+    .field:last-child { margin-bottom: 0; }
+    .field label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+    }
+    .field input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      font-family: inherit;
+    }
+    .field input:focus { outline: none; border-color: var(--accent); }
+    .field input.invalid { border-color: var(--danger); }
+    .field-error {
+      display: none;
+      font-size: 12px;
+      color: var(--danger);
+      margin-top: 6px;
+    }
+    .field-error.show { display: block; }
+
+    .cupom-nota {
+      display: none;
+      font-size: 12px;
+      margin-top: 6px;
+    }
+    .cupom-nota.show { display: block; }
+    .cupom-nota.ok { color: var(--green); }
+    .cupom-nota.erro { color: var(--danger); }
   </style>
 </head>
 <body>
@@ -391,10 +438,24 @@
     </div>
 
     <div class="card">
+      <h2>Seus dados</h2>
+      <div class="field">
+        <label for="input-email">Seu e-mail</label>
+        <input type="email" id="input-email" placeholder="seu@email.com" autocomplete="email">
+        <div class="field-error" id="email-error">Digite um e-mail válido pra gente ativar sua licença.</div>
+      </div>
+      <div class="field">
+        <label for="input-cupom">Cupom de desconto (opcional)</label>
+        <input type="text" id="input-cupom" placeholder="Ex: CRIADOR10" autocapitalize="characters">
+        <div class="cupom-nota" id="cupom-nota"></div>
+      </div>
+    </div>
+
+    <div class="card">
       <h2>Como funciona</h2>
       <ul class="steps-list">
         <li><span>Faça o <strong>PIX</strong> no valor acima usando a chave informada.</span></li>
-        <li><span>Toque no botão verde abaixo e envie o <strong>comprovante</strong> junto com seu <strong>e-mail</strong> pelo WhatsApp.</span></li>
+        <li><span>Toque no botão verde abaixo e envie o <strong>comprovante</strong> pelo WhatsApp.</span></li>
         <li><span>Confirmamos o pagamento e te enviamos o <strong>app</strong> e o passo a passo de <strong>ativação</strong> por lá mesmo.</span></li>
       </ul>
     </div>
@@ -403,8 +464,8 @@
       💬 Enviar comprovante no WhatsApp
     </a>
     <p class="note">
-      Você será direcionado ao WhatsApp com uma mensagem pronta — só confirmar
-      seu e-mail e anexar o comprovante do PIX.
+      Você será direcionado ao WhatsApp com uma mensagem pronta — é só anexar
+      o comprovante do PIX.
     </p>
   </div>
 
@@ -413,6 +474,8 @@
     function periodoValido(p) { return p === "mensal" || p === "semestral" || p === "anual"; }
 
     let periodoAtual = "mensal";
+    let planoAtualSelecionado = "basico";
+    let dadosAtuais = PLANOS.basico;
 
     function planoAtual() {
       const url = new URL(window.location.href);
@@ -422,7 +485,9 @@
 
     function render(plano) {
       const ehVip = plano === "vip";
+      planoAtualSelecionado = plano;
       const dados = ehVip ? VIP_PERIODOS[periodoAtual] : PLANOS.basico;
+      dadosAtuais = dados;
 
       document.getElementById("btn-basico").classList.toggle("active", !ehVip);
       document.getElementById("btn-vip").classList.toggle("active", ehVip);
@@ -431,27 +496,123 @@
         b.classList.toggle("active", b.dataset.periodo === periodoAtual));
 
       document.getElementById("out-nome").textContent = dados.nome;
-      document.getElementById("out-preco").textContent = dados.preco;
-      document.getElementById("out-preco-old").textContent = dados.precoOriginal || "";
       document.getElementById("out-cobranca").textContent = dados.cobranca;
       document.getElementById("out-resumo").textContent = dados.resumo;
-      document.getElementById("out-valor-pix").textContent = "R$ " + dados.valorPix;
-
-      const texto = encodeURIComponent(dados.msg);
-      document.getElementById("btn-whatsapp").href =
-        `https://wa.me/${WHATSAPP_NUMERO}?text=${texto}`;
 
       const url = new URL(window.location.href);
       url.searchParams.set("plano", plano);
       if (ehVip) url.searchParams.set("periodo", periodoAtual);
       else url.searchParams.delete("periodo");
       history.replaceState(null, "", url);
+
+      atualizarPrecoExibido();
     }
+
+    // valorPix e sempre string tipo "19,90" (formato BR) - converte pra
+    // numero pra fazer conta, e formata de volta do mesmo jeito.
+    function paraNumero(valorPixStr) { return Number(String(valorPixStr).replace(",", ".")) || 0; }
+    function paraValorPix(numero) { return numero.toFixed(2).replace(".", ","); }
+
+    // Estado do preco final calculado (com ou sem cupom) - usado tanto pra
+    // exibir na tela quanto pra montar a mensagem do WhatsApp e o registro
+    // na planilha, sem duplicar a conta em varios lugares.
+    let precoFinalAtual = { valorPix: null, cupom: "", desconto: 0 };
+
+    function atualizarPrecoExibido() {
+      const cupomTexto = document.getElementById("input-cupom").value.trim().toUpperCase();
+      const cupomInfo = CUPONS[cupomTexto];
+      const nota = document.getElementById("cupom-nota");
+
+      if (cupomTexto && !cupomInfo) {
+        nota.textContent = "Cupom inválido.";
+        nota.className = "cupom-nota show erro";
+      } else if (cupomInfo) {
+        nota.textContent = `Cupom aplicado: -${Math.round(cupomInfo.desconto * 100)}%`;
+        nota.className = "cupom-nota show ok";
+      } else {
+        nota.className = "cupom-nota";
+      }
+
+      const base = paraNumero(dadosAtuais.valorPix);
+      if (cupomInfo) {
+        const valorFinal = paraValorPix(base * (1 - cupomInfo.desconto));
+        precoFinalAtual = { valorPix: valorFinal, cupom: cupomTexto, desconto: cupomInfo.desconto };
+        document.getElementById("out-preco").textContent = "R$ " + valorFinal;
+        document.getElementById("out-preco-old").textContent = "R$ " + dadosAtuais.valorPix;
+        document.getElementById("out-valor-pix").textContent = "R$ " + valorFinal;
+      } else {
+        precoFinalAtual = { valorPix: dadosAtuais.valorPix, cupom: "", desconto: 0 };
+        document.getElementById("out-preco").textContent = dadosAtuais.preco;
+        document.getElementById("out-preco-old").textContent = dadosAtuais.precoOriginal || "";
+        document.getElementById("out-valor-pix").textContent = "R$ " + dadosAtuais.valorPix;
+      }
+    }
+
+    document.getElementById("input-cupom").addEventListener("input", atualizarPrecoExibido);
 
     document.getElementById("btn-basico").addEventListener("click", () => render("basico"));
     document.getElementById("btn-vip").addEventListener("click", () => render("vip"));
     document.querySelectorAll("#periodo-toggle button").forEach((b) =>
       b.addEventListener("click", () => { periodoAtual = b.dataset.periodo; render("vip"); }));
+
+    // Registra a venda (plano, cupom, e-mail) na planilha antes de abrir o
+    // WhatsApp - fire-and-forget, nunca bloqueia o fluxo de compra mesmo se
+    // o registro falhar (ex.: sem internet no Apps Script, offline etc).
+    function registrarVenda(payload) {
+      if (!REGISTRO_WEBHOOK_URL || REGISTRO_WEBHOOK_URL.startsWith("COLE_AQUI")) return;
+      try {
+        fetch(REGISTRO_WEBHOOK_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain" },
+          body: JSON.stringify(payload)
+        });
+      } catch {}
+    }
+
+    document.getElementById("btn-whatsapp").addEventListener("click", (e) => {
+      const emailInput = document.getElementById("input-email");
+      const email = emailInput.value.trim();
+      const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      if (!emailValido) {
+        e.preventDefault();
+        emailInput.classList.add("invalid");
+        document.getElementById("email-error").classList.add("show");
+        emailInput.focus();
+        return;
+      }
+      emailInput.classList.remove("invalid");
+      document.getElementById("email-error").classList.remove("show");
+
+      atualizarPrecoExibido(); // garante que o preco final bate com o cupom digitado
+      const cupomAplicado = precoFinalAtual.cupom;
+
+      registrarVenda({
+        plano: planoAtualSelecionado,
+        periodo: planoAtualSelecionado === "vip" ? periodoAtual : "",
+        nomePlano: dadosAtuais.nome,
+        precoOriginal: dadosAtuais.valorPix,
+        preco: precoFinalAtual.valorPix,
+        cupom: cupomAplicado,
+        descontoPct: cupomAplicado ? Math.round(precoFinalAtual.desconto * 100) : 0,
+        email,
+        data: new Date().toISOString()
+      });
+
+      // dados.msg ja traz o preco original escrito por extenso ("R$ 19,90") -
+      // com cupom valido, troca esse trecho pelo valor com desconto em vez
+      // de so acrescentar uma linha, pra mensagem nao ficar contraditoria
+      // (preco cheio no texto + preco com desconto avulso).
+      let msgFinal = dadosAtuais.msg;
+      if (cupomAplicado) {
+        msgFinal = msgFinal.replace(
+          "R$ " + dadosAtuais.valorPix,
+          "R$ " + precoFinalAtual.valorPix + ` (com cupom ${cupomAplicado}, -${Math.round(precoFinalAtual.desconto * 100)}%)`
+        );
+      }
+      msgFinal += "\nMeu e-mail: " + email;
+      e.currentTarget.href = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(msgFinal)}`;
+    });
 
     document.getElementById("btn-copy-pix").addEventListener("click", async (e) => {
       const btn = e.currentTarget;

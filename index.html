@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Idle Verse — Todas as suas contas, organizadas em um app só</title>
-  <meta name="description" content="Idle Verse organiza suas contas em menus configuráveis: jogos idle, contas Google, clientes ou projetos de trabalho. Até 4 telas por menu, login separado e salvo. A partir de R$ 9,90.">
+  <meta name="description" content="Idle Verse organiza suas contas em menus configuráveis: jogos idle, contas Google, clientes ou projetos de trabalho. Até 4 telas por menu, login separado e salvo. A partir de R$ 19,90.">
   <link rel="canonical" href="https://idleverse.com.br/">
   <meta name="google-site-verification" content="Rmnzo-eUv63HsDA9KNQTm3M010ZtOZOiA_-StPqjzJY" />
 
@@ -16,11 +16,11 @@
   <meta property="og:locale" content="pt_BR">
   <meta property="og:url" content="https://idleverse.com.br/">
   <meta property="og:title" content="Idle Verse — Todas as suas contas, organizadas em um app só">
-  <meta property="og:description" content="Gerencie várias contas de jogos idle em menus de até 4 telas, com login separado e salvo. A partir de R$ 9,90.">
+  <meta property="og:description" content="Gerencie várias contas de jogos idle em menus de até 4 telas, com login separado e salvo. A partir de R$ 19,90.">
   <meta property="og:image" content="https://idleverse.com.br/assets/og-image.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Idle Verse — Todas as suas contas, organizadas em um app só">
-  <meta name="twitter:description" content="Gerencie várias contas de jogos idle em menus de até 4 telas, com login separado e salvo. A partir de R$ 9,90.">
+  <meta name="twitter:description" content="Gerencie várias contas de jogos idle em menus de até 4 telas, com login separado e salvo. A partir de R$ 19,90.">
   <meta name="twitter:image" content="https://idleverse.com.br/assets/og-image.png">
 
   <script type="application/ld+json">
@@ -778,7 +778,7 @@
       <div class="hero-grid">
         <div class="hero-text">
           <h1>O hub definitivo para organizar <em>jogos, contas e trabalho</em>.</h1>
-          <p class="hero-punch">🔥 Aposente sua bagunça <strong>por menos de R$10,00</strong></p>
+          <p class="hero-punch">🔥 Aposente sua bagunça <strong>por menos de R$20,00</strong></p>
           <p class="lead">
             Organize varias sessoes em uma unica janela, mantenha logins separados e configure cada menu para o que voce precisa: jogos, trabalho, estudos, paineis, redes sociais ou projetos.
           </p>
@@ -958,11 +958,10 @@
       <p class="section-sub">Comece com um menu ou assine o VIP para liberar ate 5 menus com 4 telas cada ? jogos, trabalho ou os dois.</p>
 
       <div class="plans">
-        <div class="plan promo">
+        <div class="plan">
           <h3>Básico</h3>
           <p class="plan-desc">Para dominar as contas de uma única finalidade.</p>
           <div class="price-line">
-            <span class="price-old"></span>
             <span class="price">R$ 19,90</span>
           </div>
           <p class="price-note">Pagamento único · licença vitalícia</p>
@@ -989,9 +988,9 @@
 
           <div class="price-line">
             <span class="price-old" id="vip-price-old"></span>
-            <span class="price" id="vip-price">R$ 9,90</span>
+            <span class="price" id="vip-price">R$ 19,90</span>
           </div>
-          <p class="price-note" id="vip-price-note">Cobrado todo mês · cancele quando quiser</p>
+          <p class="price-note" id="vip-price-note">1º mês R$ 19,90 · depois R$ 9,90/mês · cancele quando quiser</p>
           <ul>
             <li><strong>5 menus</strong> — um propósito diferente em cada</li>
             <li><strong>20 telas</strong> no total (4 por menu)</li>
@@ -1065,7 +1064,7 @@
     <div class="wrap">
       <h2 class="section-title">Jogos, trabalho ou os dois — seu universo, organizado.</h2>
       <p class="section-sub" style="margin: 0 auto; max-width: 600px;">
-        Por menos de R$ 10 você aposenta a bagunça de janelas hoje.
+        Por menos de R$ 20 você aposenta a bagunça de janelas hoje.
       </p>
       <a class="btn btn-primary btn-big" href="#planos">Quero o Idle Verse →</a>
     </div>
@@ -1113,9 +1112,9 @@
 
     // Seletor de período do VIP (mensal / semestral / anual)
     const VIP_PERIODOS = {
-      mensal:    { preco: 'R$ 9,90', old: '', nota: 'Cobrado todo mês · cancele quando quiser' },
-      semestral: { preco: 'R$ 52,90', old: 'R$ 59,40', nota: 'a cada 6 meses (6×R$ 9,90) · 10% de desconto' },
-      anual:     { preco: 'R$ 94,90', old: 'R$ 118,80', nota: 'a cada 12 meses (12×R$ 9,90) · 20% de desconto' }
+      mensal:    { preco: 'R$ 19,90', old: '', nota: '1º mês R$ 19,90 · depois R$ 9,90/mês · cancele quando quiser' },
+      semestral: { preco: 'R$ 61,90', old: 'R$ 69,40', nota: 'a cada 6 meses (1º mês R$ 19,90 + 5×R$ 9,90) · 10% de desconto' },
+      anual:     { preco: 'R$ 102,90', old: 'R$ 128,80', nota: 'a cada 12 meses (1º mês R$ 19,90 + 11×R$ 9,90) · 20% de desconto' }
     };
 
     function setVipPeriodo(periodo) {

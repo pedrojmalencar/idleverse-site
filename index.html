@@ -1013,7 +1013,7 @@
     .plan.free .price { color: var(--green); }
     .price-old { color: var(--muted); text-decoration: line-through; font-size: 16px; }
     .price-note { color: #bdc9da; font-size: 13px; margin: 4px 0 16px; min-height: 36px; }
-    .plan ul { list-style: none; display: grid; gap: 8px; margin-bottom: 20px; flex: 1; }
+    .plan ul { list-style: none; display: grid; gap: 8px; margin-bottom: 20px; flex: 1; align-content: start; }
     .plan li { position: relative; padding-left: 22px; color: #d8e2ef; font-size: 14.5px; }
     .plan li::before { content: "✓"; position: absolute; left: 0; color: var(--gold); font-weight: 900; }
     .plan .btn { width: 100%; }
@@ -1428,6 +1428,43 @@
             </div>
           </article>
         </div>
+
+        <div class="rules-note">
+          <strong>Importante:</strong> o Idle Verse não é bot, não automatiza ações e não incentiva burlar regras.
+          O foco é organização visual, leitura de informações e ferramentas de apoio para o jogador decidir melhor.
+        </div>
+
+      </div>
+    </section>
+
+    <section id="teste">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Teste <em>grátis</em> por 7 dias.</h2>
+          <p>Sem cartão e sem compromisso. Em 3 passos você está jogando com o IV Helper na tela.</p>
+        </div>
+        <div class="steps3">
+          <article class="step3">
+            <span class="num">1</span>
+            <h3>Baixe e instale</h3>
+            <p>O instalador é leve e se atualiza sozinho. Windows 10 ou 11.</p>
+          </article>
+          <article class="step3">
+            <span class="num">2</span>
+            <h3>Solicite pelo app</h3>
+            <p>Na tela de ativação, escolha <b>Teste grátis</b>, coloque seu e-mail e WhatsApp e clique em <b>Solicitar licença</b>. Não precisa copiar nada.</p>
+          </article>
+          <article class="step3">
+            <span class="num">3</span>
+            <h3>Cole a chave e jogue</h3>
+            <p>A chave chega no seu WhatsApp. Cole no app e pronto: 7 dias do plano Básico liberados.</p>
+          </article>
+        </div>
+        <div class="trial-cta">
+          <a class="btn btn-primary" data-download href="#">⬇ Baixar o Idle Verse</a>
+          <a class="btn btn-ghost" href="#planos">Ver planos</a>
+          <small id="download-info">Instalador para Windows · versão mais recente</small>
+        </div>
       </div>
     </section>
 
@@ -1445,8 +1482,18 @@
             <div class="price-line"><span class="price">R$ 0</span></div>
             <p class="price-note">7 dias · sem cartão · sem compromisso</p>
             <ul>
-              <li>1 menu com 4 telas</li>
-              <li>IV Helper, Central PvP e Log de Capturas</li>
+              <li><b>Tudo do plano Básico</b>, liberado por 7 dias:</li>
+              <li>1 menu com 4 telas (até 4 contas de PokeIdle)</li>
+              <li><b>IV Helper no jogo</b>: IV, stats, raridade, golpes com recarga e overall</li>
+              <li>Card do Pokémon com um clique, com linha evolutiva</li>
+              <li>Stats e IV direto no Mercado Global</li>
+              <li><b>Central PvP</b> pra montar e testar seu time</li>
+              <li>Calculadora e comparação de Pokémon</li>
+              <li><b>Log de Capturas turbinado</b>: filtros e até 500 capturas</li>
+              <li>Pokédex com filtro de região e evolução</li>
+              <li>Família com filtro de raridade e Quests com busca por Pokémon/elemento</li>
+              <li>Modos do app pra cada PC (qualidade, desempenho, estabilidade)</li>
+              <li>Login salvo, som e zoom separados por tela</li>
               <li>Chave pelo WhatsApp, direto do app</li>
             </ul>
             <a class="btn btn-ghost" data-download href="#teste">Baixar e testar</a>
@@ -1458,10 +1505,18 @@
             <div class="price-line"><span class="price">R$ 9,90</span></div>
             <p class="price-note">Pagamento único · licença vitalícia</p>
             <ul>
-              <li>1 menu com 4 telas (limite do PokeIdle)</li>
-              <li>IV Helper, Central PvP, Log de Capturas e filtros da Pokédex</li>
-              <li>Login salvo por tela, som e zoom por tela</li>
-              <li>Sem mensalidade, seu para sempre</li>
+              <li>1 menu com 4 telas (até 4 contas de PokeIdle)</li>
+              <li><b>IV Helper no jogo</b>: IV, stats, raridade, golpes com recarga e overall</li>
+              <li>Card do Pokémon com um clique, com linha evolutiva</li>
+              <li>Stats e IV direto no Mercado Global</li>
+              <li><b>Central PvP</b> pra montar e testar seu time</li>
+              <li>Calculadora e comparação de Pokémon</li>
+              <li><b>Log de Capturas turbinado</b>: filtros e até 500 capturas</li>
+              <li>Pokédex com filtro de região e evolução</li>
+              <li>Família com filtro de raridade e Quests com busca por Pokémon/elemento</li>
+              <li>Modos do app pra cada PC (qualidade, desempenho, estabilidade)</li>
+              <li>Login salvo, som e zoom separados por tela</li>
+              <li><b>Sem mensalidade</b>, seu para sempre</li>
             </ul>
             <a class="btn" data-buy="basico" href="#">Comprar o Básico</a>
           </div>
@@ -1481,6 +1536,7 @@
             </div>
             <p class="price-note" id="vip-price-note">1º mês R$ 15,90 · depois R$ 9,90/mês · cancele quando quiser</p>
             <ul>
+              <li><b>Tudo do plano Básico</b>, mais:</li>
               <li><b>Rotas de Up</b>, <b>Metas Pessoais</b> e <b>Criar Anúncio</b></li>
               <li>5 menus de 4 telas — até 20 telas</li>
               <li>TM Tracker e aviso de ovo pronto no Breeding</li>

@@ -152,6 +152,24 @@
       color: var(--text);
     }
 
+
+    /* menu Jogos: caminho para cada jogo suportado */
+    .nav-games { position: relative; }
+    .nav-games summary { list-style: none; cursor: pointer; color: var(--muted); font-weight: 700; transition: .15s ease; }
+    .nav-games summary::-webkit-details-marker { display: none; }
+    .nav-games summary::after { content: " \25BE"; font-size: .8em; }
+    .nav-games[open] summary, .nav-games summary:hover { color: var(--text); }
+    .nav-games-menu { position: absolute; top: calc(100% + 12px); left: -14px; z-index: 90; min-width: 270px; padding: 8px; border: 1px solid var(--border); border-radius: 14px; background: rgba(8, 12, 20, .98); box-shadow: 0 18px 48px rgba(0,0,0,.5); }
+    .nav-games-menu a { display: block; padding: 10px 12px; border: 0; border-radius: 10px; white-space: nowrap; }
+    .nav-games-menu a:hover, .nav-games-menu a.active { background: rgba(255,203,69,.1); }
+    .nav-games-menu a b { display: block; color: var(--text); font-size: 14px; }
+    .nav-games-menu a small { display: block; color: var(--muted); font-size: 12px; }
+    .nav-games-menu .soon { margin-top: 6px; padding: 10px 12px 4px; border-top: 1px solid rgba(255,255,255,.08); color: var(--muted); font-size: 12px; }
+    @media (max-width: 980px) {
+      .nav-games summary { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,.06); }
+      .nav-games-menu { position: static; min-width: 0; padding: 4px 8px 8px; border: 0; border-radius: 0; box-shadow: none; background: rgba(255,255,255,.03); }
+    }
+
     .nav-toggle {
       display: none;
       min-height: 40px;
@@ -1004,8 +1022,15 @@
       <a class="logo" href="./"><span>IV</span>IDLE VERSE</a>
       <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false">Menu</button>
       <nav class="nav-links">
-        <a href="./#features">PokeIdle</a>
-        <a href="#recursos">Anime Idle</a>
+        <details class="nav-games">
+          <summary>Jogos</summary>
+          <div class="nav-games-menu">
+            <a href="./"><b>PokeIdle World</b><small>IV Helper, Central PvP, Metas, Rotas de Up</small></a>
+            <a class="active" href="anime-idle.html"><b>Anime Idle</b><small>Runas, Encantar, Maestria e Guilda</small></a>
+            <div class="soon">Mais jogos em breve</div>
+          </div>
+        </details>
+        <a href="#recursos">Recursos</a>
         <a href="#como">Como funciona</a>
         <a href="./#planos">Planos</a>
         <a href="#duvidas">Dúvidas</a>
@@ -1213,6 +1238,16 @@
       <span>Projeto independente. Não automatiza ações e não possui vínculo oficial com o Anime Idle.</span>
     </div>
   </footer>
+
+  <script id="nav-games-script">
+    (() => {
+      const d = document.querySelector(".nav-games");
+      if (!d) return;
+      document.addEventListener("click", (e) => { if (d.open && !d.contains(e.target)) d.open = false; });
+      document.addEventListener("keydown", (e) => { if (e.key === "Escape") d.open = false; });
+      d.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => { d.open = false; }));
+    })();
+  </script>
 
   <script id="mobile-nav-script">
     (() => {

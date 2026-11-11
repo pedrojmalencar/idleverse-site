@@ -42,37 +42,57 @@
         resumo: "2 menus com 4 telas cada (até 8 telas), configuráveis para qualquer site (jogo, e-mail, painel de trabalho...).",
         valorPix: "9,90",
         msg: "Olá! Quero o plano *Básico* do Idle Verse (R$ 9,90, pagamento único). Já fiz o PIX e vou enviar o comprovante agora."
+      },
+      basico2: {
+        nome: "Básico 2 aparelhos",
+        preco: "R$ 15,90",
+        precoOriginal: "",
+        cobranca: "Pagamento único · licença vitalícia · 2 aparelhos",
+        resumo: "O Básico em 2 aparelhos: PC + celular (Android) ou 2 PCs, como casa e trabalho. Cada aparelho recebe a própria chave.",
+        valorPix: "15,90",
+        msg: "Olá! Quero o plano *Básico 2 aparelhos* do Idle Verse (R$ 15,90, pagamento único). Já fiz o PIX e vou enviar o comprovante agora."
       }
+    };
+
+    // VIP em 2 aparelhos (PC + celular ou 2 PCs): so mensal.
+    const VIP_2 = {
+      nome: "VIP 2 aparelhos",
+      preco: "R$ 15,90",
+      precoOriginal: "",
+      cobranca: "R$ 15,90 por mês · 2 aparelhos · cancele quando quiser",
+      resumo: "O VIP em 2 aparelhos: PC + celular (Android) ou 2 PCs, como casa e trabalho. Cada aparelho recebe a própria chave.",
+      valorPix: "15,90",
+      msg: "Olá! Quero assinar o plano *VIP 2 aparelhos* do Idle Verse (R$ 15,90 por mês). Já fiz o PIX e vou enviar o comprovante agora."
     };
 
     // VIP tem 3 formas de cobrança — mesmos benefícios, muda só o período e o preço
     const VIP_PERIODOS = {
       mensal: {
         nome: "VIP Mensal",
-        preco: "R$ 9,90",
+        preco: "R$ 15,90",
         precoOriginal: "",
-        cobranca: "R$ 9,90 por mês · cancele quando quiser",
+        cobranca: "R$ 15,90 no 1º mês, depois R$ 9,90 por mês · cancele quando quiser",
         resumo: "5 menus, até 20 telas no total. Ganha o plano Básico vitalício de brinde e mantém os benefícios VIP enquanto a assinatura estiver ativa.",
-        valorPix: "9,90",
-        msg: "Olá! Quero assinar o plano *VIP Mensal* do Idle Verse (R$ 9,90 por mês). Já fiz o PIX e vou enviar o comprovante agora."
+        valorPix: "15,90",
+        msg: "Olá! Quero assinar o plano *VIP Mensal* do Idle Verse (R$ 15,90 no 1º mês, depois R$ 9,90 por mês). Já fiz o PIX e vou enviar o comprovante agora."
       },
       semestral: {
         nome: "VIP Semestral",
-        preco: "R$ 52,90",
-        precoOriginal: "R$ 59,40",
-        cobranca: "A cada 6 meses (6×R$ 9,90) · 10% de desconto",
+        preco: "R$ 58,90",
+        precoOriginal: "R$ 65,40",
+        cobranca: "A cada 6 meses (R$ 15,90 + 5×R$ 9,90) · 10% de desconto",
         resumo: "5 menus, até 20 telas no total. Ganha o plano Básico vitalício de brinde e mantém os benefícios VIP enquanto a assinatura estiver ativa.",
-        valorPix: "52,90",
-        msg: "Olá! Quero assinar o plano *VIP Semestral* do Idle Verse (R$ 52,90 a cada 6 meses). Já fiz o PIX e vou enviar o comprovante agora."
+        valorPix: "58,90",
+        msg: "Olá! Quero assinar o plano *VIP Semestral* do Idle Verse (R$ 58,90 a cada 6 meses). Já fiz o PIX e vou enviar o comprovante agora."
       },
       anual: {
         nome: "VIP Anual",
-        preco: "R$ 94,90",
-        precoOriginal: "R$ 118,80",
-        cobranca: "A cada 12 meses (12×R$ 9,90) · 20% de desconto",
+        preco: "R$ 99,90",
+        precoOriginal: "R$ 124,80",
+        cobranca: "A cada 12 meses (R$ 15,90 + 11×R$ 9,90) · 20% de desconto",
         resumo: "5 menus, até 20 telas no total. Ganha o plano Básico vitalício de brinde e mantém os benefícios VIP enquanto a assinatura estiver ativa.",
-        valorPix: "94,90",
-        msg: "Olá! Quero assinar o plano *VIP Anual* do Idle Verse (R$ 94,90 a cada 12 meses). Já fiz o PIX e vou enviar o comprovante agora."
+        valorPix: "99,90",
+        msg: "Olá! Quero assinar o plano *VIP Anual* do Idle Verse (R$ 99,90 a cada 12 meses). Já fiz o PIX e vou enviar o comprovante agora."
       }
     };
   </script>
@@ -396,6 +416,11 @@
       <button type="button" id="btn-vip" data-plano="vip">VIP</button>
     </div>
 
+    <div class="periodo-toggle show" id="aparelhos-toggle">
+      <button type="button" data-aparelhos="1">1 aparelho</button>
+      <button type="button" data-aparelhos="2">2 aparelhos<span class="badge-off">PC + celular ou 2 PCs</span></button>
+    </div>
+
     <div class="periodo-toggle" id="periodo-toggle">
       <button type="button" data-periodo="mensal">Mensal</button>
       <button type="button" data-periodo="semestral">Semestral<span class="badge-off">-10%</span></button>
@@ -474,6 +499,7 @@
     function periodoValido(p) { return p === "mensal" || p === "semestral" || p === "anual"; }
 
     let periodoAtual = "mensal";
+    let aparelhosAtual = new URL(window.location.href).searchParams.get("aparelhos") === "2" ? 2 : 1;
     let planoAtualSelecionado = "basico";
     let dadosAtuais = PLANOS.basico;
 
@@ -486,12 +512,16 @@
     function render(plano) {
       const ehVip = plano === "vip";
       planoAtualSelecionado = plano;
-      const dados = ehVip ? VIP_PERIODOS[periodoAtual] : PLANOS.basico;
+      const dois = aparelhosAtual === 2;
+      const dados = ehVip ? (dois ? VIP_2 : VIP_PERIODOS[periodoAtual]) : (dois ? PLANOS.basico2 : PLANOS.basico);
       dadosAtuais = dados;
 
       document.getElementById("btn-basico").classList.toggle("active", !ehVip);
       document.getElementById("btn-vip").classList.toggle("active", ehVip);
-      document.getElementById("periodo-toggle").classList.toggle("show", ehVip);
+      // VIP em 2 aparelhos so tem mensal: some a escolha de periodo.
+      document.getElementById("periodo-toggle").classList.toggle("show", ehVip && !dois);
+      document.querySelectorAll("#aparelhos-toggle button").forEach((b) =>
+        b.classList.toggle("active", Number(b.dataset.aparelhos) === aparelhosAtual));
       document.querySelectorAll("#periodo-toggle button").forEach((b) =>
         b.classList.toggle("active", b.dataset.periodo === periodoAtual));
 
@@ -501,8 +531,10 @@
 
       const url = new URL(window.location.href);
       url.searchParams.set("plano", plano);
-      if (ehVip) url.searchParams.set("periodo", periodoAtual);
+      if (ehVip && !dois) url.searchParams.set("periodo", periodoAtual);
       else url.searchParams.delete("periodo");
+      if (dois) url.searchParams.set("aparelhos", "2");
+      else url.searchParams.delete("aparelhos");
       history.replaceState(null, "", url);
 
       atualizarPrecoExibido();
@@ -558,6 +590,8 @@
     document.getElementById("btn-vip").addEventListener("click", () => render("vip"));
     document.querySelectorAll("#periodo-toggle button").forEach((b) =>
       b.addEventListener("click", () => { periodoAtual = b.dataset.periodo; render("vip"); }));
+    document.querySelectorAll("#aparelhos-toggle button").forEach((b) =>
+      b.addEventListener("click", () => { aparelhosAtual = Number(b.dataset.aparelhos); render(planoAtualSelecionado); }));
 
     // Registra a venda (plano, cupom, e-mail) na planilha antes de abrir o
     // WhatsApp - fire-and-forget, nunca bloqueia o fluxo de compra mesmo se

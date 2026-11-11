@@ -54,15 +54,36 @@
       }
     };
 
-    // VIP em 2 aparelhos (PC + celular ou 2 PCs): so mensal.
-    const VIP_2 = {
-      nome: "VIP 2 aparelhos",
-      preco: "R$ 15,90",
-      precoOriginal: "",
-      cobranca: "R$ 15,90 por mês · 2 aparelhos · cancele quando quiser",
-      resumo: "O VIP em 2 aparelhos: PC + celular (Android) ou 2 PCs, como casa e trabalho. Cada aparelho recebe a própria chave.",
-      valorPix: "15,90",
-      msg: "Olá! Quero assinar o plano *VIP 2 aparelhos* do Idle Verse (R$ 15,90 por mês). Já fiz o PIX e vou enviar o comprovante agora."
+    // VIP em 2 aparelhos (PC + celular ou 2 PCs): R$ 15,90 todo mes.
+    // Semestral/anual = meses x R$ 15,90 com 10%/20% de desconto, arredondado pra ,90.
+    const VIP_2_PERIODOS = {
+      mensal: {
+        nome: "VIP 2 aparelhos Mensal",
+        preco: "R$ 15,90",
+        precoOriginal: "",
+        cobranca: "R$ 15,90 por mês · 2 aparelhos · cancele quando quiser",
+        resumo: "O VIP em 2 aparelhos: PC + celular (Android) ou 2 PCs, como casa e trabalho. Cada aparelho recebe a própria chave.",
+        valorPix: "15,90",
+        msg: "Olá! Quero assinar o plano *VIP 2 aparelhos Mensal* do Idle Verse (R$ 15,90 por mês). Já fiz o PIX e vou enviar o comprovante agora."
+      },
+      semestral: {
+        nome: "VIP 2 aparelhos Semestral",
+        preco: "R$ 85,90",
+        precoOriginal: "R$ 95,40",
+        cobranca: "A cada 6 meses (6×R$ 15,90) · 2 aparelhos · 10% de desconto",
+        resumo: "O VIP em 2 aparelhos: PC + celular (Android) ou 2 PCs, como casa e trabalho. Cada aparelho recebe a própria chave.",
+        valorPix: "85,90",
+        msg: "Olá! Quero assinar o plano *VIP 2 aparelhos Semestral* do Idle Verse (R$ 85,90 a cada 6 meses). Já fiz o PIX e vou enviar o comprovante agora."
+      },
+      anual: {
+        nome: "VIP 2 aparelhos Anual",
+        preco: "R$ 152,90",
+        precoOriginal: "R$ 190,80",
+        cobranca: "A cada 12 meses (12×R$ 15,90) · 2 aparelhos · 20% de desconto",
+        resumo: "O VIP em 2 aparelhos: PC + celular (Android) ou 2 PCs, como casa e trabalho. Cada aparelho recebe a própria chave.",
+        valorPix: "152,90",
+        msg: "Olá! Quero assinar o plano *VIP 2 aparelhos Anual* do Idle Verse (R$ 152,90 a cada 12 meses). Já fiz o PIX e vou enviar o comprovante agora."
+      }
     };
 
     // VIP tem 3 formas de cobrança — mesmos benefícios, muda só o período e o preço
@@ -513,13 +534,12 @@
       const ehVip = plano === "vip";
       planoAtualSelecionado = plano;
       const dois = aparelhosAtual === 2;
-      const dados = ehVip ? (dois ? VIP_2 : VIP_PERIODOS[periodoAtual]) : (dois ? PLANOS.basico2 : PLANOS.basico);
+      const dados = ehVip ? (dois ? VIP_2_PERIODOS[periodoAtual] : VIP_PERIODOS[periodoAtual]) : (dois ? PLANOS.basico2 : PLANOS.basico);
       dadosAtuais = dados;
 
       document.getElementById("btn-basico").classList.toggle("active", !ehVip);
       document.getElementById("btn-vip").classList.toggle("active", ehVip);
-      // VIP em 2 aparelhos so tem mensal: some a escolha de periodo.
-      document.getElementById("periodo-toggle").classList.toggle("show", ehVip && !dois);
+      document.getElementById("periodo-toggle").classList.toggle("show", ehVip);
       document.querySelectorAll("#aparelhos-toggle button").forEach((b) =>
         b.classList.toggle("active", Number(b.dataset.aparelhos) === aparelhosAtual));
       document.querySelectorAll("#periodo-toggle button").forEach((b) =>
@@ -531,7 +551,7 @@
 
       const url = new URL(window.location.href);
       url.searchParams.set("plano", plano);
-      if (ehVip && !dois) url.searchParams.set("periodo", periodoAtual);
+      if (ehVip) url.searchParams.set("periodo", periodoAtual);
       else url.searchParams.delete("periodo");
       if (dois) url.searchParams.set("aparelhos", "2");
       else url.searchParams.delete("aparelhos");

@@ -1064,7 +1064,7 @@
         <h1>Seus jogos idle <em>no celular</em>.</h1>
         <p class="lead">O app Android do Idle Verse abre até 4 contas no celular, uma tela por vez em tela cheia, com um menu lateral para trocar entre elas. As outras telas continuam rodando em espera, gastando pouca bateria. O IV Helper do PokeIdle funciona igual ao do PC.</p>
         <div class="hero-actions">
-          <a class="btn btn-primary" data-apk href="https://github.com/pedrojmalencar/IdleVerse-releases/releases/download/mobile-v0.4.0/IdleVerse-celular-0.4.0.apk">⬇ Baixar app Android <span data-apk-ver>(v0.4.0)</span></a>
+          <a class="btn btn-primary" data-apk href="https://github.com/pedrojmalencar/IdleVerse-releases/releases/download/mobile-v0.8.3/IdleVerse-celular-0.8.3.apk">⬇ Baixar app Android <span data-apk-ver>(v0.4.0)</span></a>
           <a class="btn btn-ghost" href="#instalar">Como instalar</a>
         </div>
         <p class="trial-note"><b>Android 8 ou mais novo</b> · arquivo de ~5 MB · fora da Play Store</p>
@@ -1143,6 +1143,20 @@
     (() => {
       // Botao sempre aponta para a versao mais nova do celular (releases "mobile-v*").
       const links = document.querySelectorAll("[data-apk]");
+      const usar = (url, ver) => {
+        links.forEach((a) => { a.href = url; });
+        document.querySelectorAll("[data-apk-ver]").forEach((s) => { s.textContent = "(v" + ver + ")"; });
+      };
+      // 1) arquivo fixo com a versao mais nova (sem o limite de consultas da API do GitHub)
+      fetch("https://raw.githubusercontent.com/pedrojmalencar/IdleVerse-releases/main/mobile-latest.json", { cache: "no-store" })
+        .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+        .then((j) => {
+          if (!j || !/^https:\/\/github\.com\/pedrojmalencar\/IdleVerse-releases\/releases\/download\//.test(j.apkUrl || "")) throw 0;
+          usar(j.apkUrl, j.versionName);
+        })
+        .catch(() => viaApi());
+      // 2) reserva: API do GitHub
+      function viaApi() {
       fetch("https://api.github.com/repos/pedrojmalencar/IdleVerse-releases/releases?per_page=30")
         .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
         .then((list) => {
@@ -1150,10 +1164,10 @@
           if (!rel) return;
           const apk = (rel.assets || []).find((a) => /\.apk$/i.test(a.name));
           if (!apk) return;
-          links.forEach((a) => { a.href = apk.browser_download_url; });
-          document.querySelectorAll("[data-apk-ver]").forEach((s) => { s.textContent = "(v" + rel.tag_name.replace("mobile-v", "") + ")"; });
+          usar(apk.browser_download_url, rel.tag_name.replace("mobile-v", ""));
         })
         .catch(() => {});
+      }
     })();
   </script>
 
